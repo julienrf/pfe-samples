@@ -38,7 +38,7 @@ object Items extends Controller {
 
   def details(id: Long) = Action {
     shop.get(id) match {
-      case Some(product) => Ok(Json.toJson(product))
+      case Some(item) => Ok(Json.toJson(item))
       case None => NotFound
     }
   }

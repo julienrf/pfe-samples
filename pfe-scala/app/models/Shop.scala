@@ -35,7 +35,7 @@ object Shop extends Shop {
 
   def get(id: Long): Option[Item] = items.single().get(id)
 
-  def update(id: Long, name: String, price: Double): Option[Product] = atomic { implicit txn =>
+  def update(id: Long, name: String, price: Double): Option[Item] = atomic { implicit txn =>
     for (_ <- items().get(id)) yield {
       val updated = Item(id, name, price)
       items.transform(_.updated(id, updated))
