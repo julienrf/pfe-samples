@@ -1,8 +1,5 @@
 package models
 
-import scala.concurrent.stm.{Ref, atomic}
-import scala.collection.immutable.SortedMap
-
 case class Item(id: Long, name: String, price: Double)
 
 trait Shop {
@@ -21,33 +18,29 @@ trait Shop {
 
 object Shop extends Shop {
 
-  private val items = Ref(SortedMap.empty[Long, Item])
-  private val seq = Ref(0L)
+  import db.Schema.{ds, items, Items}
+  import db.Schema.queryLanguage._
 
-  def list: Iterable[Item] = items.single().values
-
-  def create(name: String, price: Double): Option[Item] = {
-    val id = seq.single.transformAndGet(_ + 1)
-    val item = Item(id, name, price)
-    items.single.transform(_ + (id -> item))
-    Some(item)
+  def list: Iterable[Item] = ds withSession { implicit session =>
+    items.list()
   }
 
-  def get(id: Long): Option[Item] = items.single().get(id)
-
-  def update(id: Long, name: String, price: Double): Option[Item] = atomic { implicit txn =>
-    for (_ <- items().get(id)) yield {
-      val updated = Item(id, name, price)
-      items.transform(_.updated(id, updated))
-      updated
-    }
+  def create(name: String, price: Double): Option[Item] = ds withSession { implicit session =>
+    val id = items.returning(items.map(_.id)) += Item(0, name, price)
+    items.byId(id).firstOption()
   }
 
-  def delete(id: Long): Boolean = atomic { implicit txn =>
-    items().isDefinedAt(id) && {
-      items.transform(_ - id)
-      true
-    }
+  def get(id: Long): Option[Item] = ds withSession { implicit session =>
+    items.byId(id).firstOption()
+  }
+
+  def update(id: Long, name: String, price: Double): Option[Item] = ds withSession { implicit session =>
+    items.byId(id).update(Item(id, name, price))
+    items.byId(id).firstOption()
+  }
+
+  def delete(id: Long): Boolean = ds withSession { implicit session =>
+    items.byId(id).delete != 0
   }
 
 }

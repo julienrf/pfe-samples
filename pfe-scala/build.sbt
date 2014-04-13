@@ -1,11 +1,15 @@
-resolvers += "Typesafe snasphots" at "http://repo.typesafe.com/typesafe/snapshots/"
+import play.Project._
 
-name := """pfe-scala"""
+name := "pfe-scala"
 
 version := "1.0-SNAPSHOT"
 
 libraryDependencies += "org.mockito" % "mockito-core" % "1.9.5" % "test"
 
+libraryDependencies += jdbc
+
+libraryDependencies += "com.typesafe.slick" %% "slick" % "2.0.1"
+
 scalacOptions += "-feature"
 
-play.Project.playScalaSettings
+playScalaSettings
