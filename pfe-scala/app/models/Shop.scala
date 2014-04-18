@@ -4,7 +4,7 @@ case class Item(id: Long, name: String, price: Double)
 
 trait Shop {
 
-  def list: Iterable[Item]
+  def list(): Iterable[Item]
 
   def create(name: String, price: Double): Option[Item]
 
@@ -18,10 +18,11 @@ trait Shop {
 
 object Shop extends Shop {
 
-  import db.Schema.{ds, items, Items}
+  import db.Schema.{ds, items}
   import db.Schema.queryLanguage._
+  import play.api.Play.current
 
-  def list: Iterable[Item] = ds withSession { implicit session =>
+  def list(): Iterable[Item] = ds withSession { implicit session =>
     items.list()
   }
 

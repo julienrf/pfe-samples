@@ -23,6 +23,6 @@ object Schema {
     }
   }
 
-  // TODO This should not be left as a def (but we need dependency injection to fix that…)
-  def ds = Database.forDataSource(play.api.db.DB.getDataSource()(play.api.Play.current))
+  def ds(implicit app: play.api.Application) =
+    Database.forDataSource(play.api.db.DB.getDataSource())
 }

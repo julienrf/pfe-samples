@@ -8,6 +8,7 @@ import play.mvc.Result;
 
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
+import static shop.ShopApplication.runningShopApplication;
 
 public class ItemsTest {
 
@@ -15,18 +16,18 @@ public class ItemsTest {
 
     {
         Items.CreateItem item = new Items.CreateItem();
-        item.name = "Play! Framework Essentials";
+        item.name = "Play Framework Essentials";
         item.price = 42.0;
         itemCreate = Json.toJson(item);
     }
 
     @Test
     public void createItem() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
+        runningShopApplication(() -> {
             Result response = callAction(routes.ref.Items.create(), fakeRequest().withJsonBody(itemCreate));
             assertThat(status(response)).isEqualTo(OK);
             Item item = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
-            assertThat(item.name).isEqualTo("Play! Framework Essentials");
+            assertThat(item.name).isEqualTo("Play Framework Essentials");
             assertThat(item.price).isEqualTo(42.0);
             assertThat(item.id).isNotNull();
         });
@@ -34,7 +35,7 @@ public class ItemsTest {
 
     @Test
     public void listItems() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
+        runningShopApplication(() -> {
             Result response = callAction(routes.ref.Items.list());
             assertThat(status(response)).isEqualTo(OK);
             assertThat(contentAsString(response)).isEqualTo("[]");
@@ -43,20 +44,20 @@ public class ItemsTest {
 
     @Test
     public void getItem() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
+        runningShopApplication(() -> {
             Result response = callAction(routes.ref.Items.create(), fakeRequest().withJsonBody(itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
             Result response2 = callAction(controllers.routes.ref.Items.details(createdItem.id));
             assertThat(status(response)).isEqualTo(OK);
             Item item = Json.fromJson(Json.parse(contentAsString(response2)), Item.class);
-            assertThat(item.name).isEqualTo("Play! Framework Essentials");
+            assertThat(item.name).isEqualTo("Play Framework Essentials");
             assertThat(item.price).isEqualTo(42.0);
         });
     }
 
     @Test
     public void updateItem() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
+        runningShopApplication(() -> {
             Result response = callAction(routes.ref.Items.create(), fakeRequest().withJsonBody(itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
             Items.CreateItem update = new Items.CreateItem();
@@ -65,14 +66,14 @@ public class ItemsTest {
             Result response2 = callAction(controllers.routes.ref.Items.update(createdItem.id), fakeRequest().withJsonBody(Json.toJson(update)));
             assertThat(status(response)).isEqualTo(OK);
             Item item = Json.fromJson(Json.parse(contentAsString(response2)), Item.class);
-            assertThat(item.name).isEqualTo("Play! Framework Essentials");
+            assertThat(item.name).isEqualTo("Play Framework Essentials");
             assertThat(item.price).isEqualTo(10.0);
         });
     }
 
     @Test
     public void deleteItem() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
+        runningShopApplication(() -> {
             Result response = callAction(routes.ref.Items.create(), fakeRequest().withJsonBody(itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
             Result response2 = callAction(controllers.routes.ref.Items.delete(createdItem.id));

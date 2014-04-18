@@ -8,8 +8,8 @@ class ItemsSpec extends PlaySpecification {
 
   "Items controller" should {
 
-    val itemCreate = Json.obj("name" -> "Play! Framework Essentials", "price" -> 42)
-    val createdItem = Json.obj("id" -> 1, "name" -> "Play! Framework Essentials", "price" -> 42)
+    val itemCreate = Json.obj("name" -> "Play Framework Essentials", "price" -> 42)
+    val createdItem = Json.obj("id" -> 1, "name" -> "Play Framework Essentials", "price" -> 42)
 
     "add an item" in new ShopApplication {
       val response = call(Items.create, FakeRequest().withJsonBody(itemCreate))
@@ -36,10 +36,10 @@ class ItemsSpec extends PlaySpecification {
 
     "update an item" in new ShopApplication {
       val item = contentAsJson(call(Items.create, FakeRequest().withJsonBody(itemCreate)))
-      val updatedItem = contentAsJson(call(Items.update((item \ "id").as[Long]), FakeRequest().withJsonBody(Json.obj("name" -> "Play! Framework Essentials", "price" -> 10))))
+      val updatedItem = contentAsJson(call(Items.update((item \ "id").as[Long]), FakeRequest().withJsonBody(Json.obj("name" -> "Play Framework Essentials", "price" -> 10))))
       val itemDetails = contentAsJson(call(Items.details((item \ "id").as[Long]), FakeRequest()))
       itemDetails must equalTo (updatedItem)
-      itemDetails must equalTo (Json.obj("id" -> 1, "name" -> "Play! Framework Essentials", "price" -> 10))
+      itemDetails must equalTo (Json.obj("id" -> 1, "name" -> "Play Framework Essentials", "price" -> 10))
     }
 
     "delete an item" in new ShopApplication {
