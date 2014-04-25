@@ -1,0 +1,9 @@
+@(form: Form[Items.CreateItem])
+@layout {
+    <h2>Add an item</h2>
+    @helper.form(routes.Items.create()) {
+        @helper.inputText(form("name"), '_label -> "Name")
+        @helper.inputText(form("price"), '_label -> "Price")
+        <button>Save</button>
+    }
+}

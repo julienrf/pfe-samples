@@ -1,0 +1,5 @@
+@(item: models.Item)
+@layout {
+    <h2>Item details</h2>
+    <p><strong>@item.name</strong>: @(f"${item.price}%.2f")&nbsp;€</p>
+}

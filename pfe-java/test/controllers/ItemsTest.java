@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import models.Item;
 import org.junit.Test;
 import play.libs.Json;
+import play.mvc.Call;
+import play.mvc.Http;
 import play.mvc.Result;
+import play.test.FakeRequest;
 
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
-import static shop.ShopApplication.runningShopApplication;
+import static shop.ShopApplication.withApplication;
 
 public class ItemsTest {
 
@@ -23,8 +26,8 @@ public class ItemsTest {
 
     @Test
     public void createItem() {
-        runningShopApplication(() -> {
-            Result response = callAction(routes.ref.Items.create(), fakeRequest().withJsonBody(itemCreate));
+        withApplication(() -> {
+            Result response = route(jsonRequest(routes.Items.create(), itemCreate));
             assertThat(status(response)).isEqualTo(OK);
             Item item = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
             assertThat(item.name).isEqualTo("Play Framework Essentials");
@@ -35,8 +38,8 @@ public class ItemsTest {
 
     @Test
     public void listItems() {
-        runningShopApplication(() -> {
-            Result response = callAction(routes.ref.Items.list());
+        withApplication(() -> {
+            Result response = route(jsonRequest(routes.Items.list()));
             assertThat(status(response)).isEqualTo(OK);
             assertThat(contentAsString(response)).isEqualTo("[]");
         });
@@ -44,10 +47,10 @@ public class ItemsTest {
 
     @Test
     public void getItem() {
-        runningShopApplication(() -> {
-            Result response = callAction(routes.ref.Items.create(), fakeRequest().withJsonBody(itemCreate));
+        withApplication(() -> {
+            Result response = route(jsonRequest(routes.Items.create(), itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
-            Result response2 = callAction(controllers.routes.ref.Items.details(createdItem.id));
+            Result response2 = route(jsonRequest(routes.Items.details(createdItem.id)));
             assertThat(status(response)).isEqualTo(OK);
             Item item = Json.fromJson(Json.parse(contentAsString(response2)), Item.class);
             assertThat(item.name).isEqualTo("Play Framework Essentials");
@@ -57,13 +60,13 @@ public class ItemsTest {
 
     @Test
     public void updateItem() {
-        runningShopApplication(() -> {
-            Result response = callAction(routes.ref.Items.create(), fakeRequest().withJsonBody(itemCreate));
+        withApplication(() -> {
+            Result response = route(jsonRequest(routes.Items.create(), itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
             Items.CreateItem update = new Items.CreateItem();
             update.name = createdItem.name;
             update.price = 10.0;
-            Result response2 = callAction(controllers.routes.ref.Items.update(createdItem.id), fakeRequest().withJsonBody(Json.toJson(update)));
+            Result response2 = route(jsonRequest(routes.Items.update(createdItem.id), Json.toJson(update)));
             assertThat(status(response)).isEqualTo(OK);
             Item item = Json.fromJson(Json.parse(contentAsString(response2)), Item.class);
             assertThat(item.name).isEqualTo("Play Framework Essentials");
@@ -73,12 +76,21 @@ public class ItemsTest {
 
     @Test
     public void deleteItem() {
-        runningShopApplication(() -> {
-            Result response = callAction(routes.ref.Items.create(), fakeRequest().withJsonBody(itemCreate));
+        withApplication(() -> {
+            Result response = route(jsonRequest(routes.Items.create(), itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
-            Result response2 = callAction(controllers.routes.ref.Items.delete(createdItem.id));
+            Result response2 = route(jsonRequest(routes.Items.delete(createdItem.id)));
             assertThat(status(response2)).isEqualTo(OK);
-            assertThat(status(callAction(routes.ref.Items.details(createdItem.id)))).isEqualTo(NOT_FOUND);
+            assertThat(status(route(jsonRequest(routes.Items.details(createdItem.id))))).isEqualTo(NOT_FOUND);
         });
     }
+
+    FakeRequest jsonRequest(Call call, JsonNode body) {
+        return fakeRequest(call.method(), call.url()).withJsonBody(body).withHeader(ACCEPT, Http.MimeTypes.JSON);
+    }
+
+    FakeRequest jsonRequest(Call call) {
+        return fakeRequest(call.method(), call.url()).withHeader(ACCEPT, Http.MimeTypes.JSON);
+    }
+
 }

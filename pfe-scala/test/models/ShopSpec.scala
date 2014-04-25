@@ -1,7 +1,7 @@
 package models
 
 import org.specs2.mutable.Specification
-import shop.ShopApplication
+import shop.WithShopApplication
 
 class ShopSpec extends Specification {
 
@@ -9,20 +9,20 @@ class ShopSpec extends Specification {
 
     val shop = Shop
 
-    "add an item" in new ShopApplication {
+    "add an item" in new WithShopApplication {
       shop.create("Play Framework Essentials", 42) must beSome[Item].which { item =>
         item.name == "Play Framework Essentials" && item.price == 42
       }
     }
 
-    "list items" in new ShopApplication {
+    "list items" in new WithShopApplication {
       val previousSize = shop.list().size
       shop.create("Play Framework Essentials", 42)
       shop.list() must haveSize (previousSize + 1)
       shop.list().find(item => item.name == "Play Framework Essentials" && item.price == 42) must beSome
     }
 
-    "get an item" in new ShopApplication {
+    "get an item" in new WithShopApplication {
       val maybeItem = for {
         createdItem <- shop.create("Play Framework Essentials", 42)
         item <- shop.get(createdItem.id)
@@ -32,7 +32,7 @@ class ShopSpec extends Specification {
       }
     }
 
-    "update an item" in new ShopApplication {
+    "update an item" in new WithShopApplication {
       val maybeItem = for {
         createdItem <- shop.create("Play Framework Essentials", 42)
         updatedItem <- shop.update(createdItem.id, createdItem.name, 10)
@@ -42,7 +42,7 @@ class ShopSpec extends Specification {
       maybeItem must beSome[Item].which(item => item.name == "Play Framework Essentials" && item.price == 10)
     }
 
-    "delete an item" in new ShopApplication {
+    "delete an item" in new WithShopApplication {
       val maybeDeleted = for {
         createdItem <- shop.create("Play Framework Essentials", 42)
         deleted = shop.delete(createdItem.id)

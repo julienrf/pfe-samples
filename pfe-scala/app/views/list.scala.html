@@ -1,0 +1,10 @@
+@(items: Traversable[models.Item])
+@layout {
+    <h2>Items list</h2>
+    <ul>
+    @for(item <- items) {
+        <li><a href="@routes.Items.details(item.id)">@item.name</a></li>
+    }
+    </ul>
+    <a href="@routes.Items.createForm()">Add a new item</a>
+}

@@ -1,66 +1,85 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import models.Item;
 import models.Shop;
+import play.data.Form;
+import play.data.validation.Constraints;
 import play.libs.Json;
-import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import static controllers.Render.render;
+import static controllers.Render.version;
+import static play.mvc.Http.MimeTypes;
+
 public class Items extends Controller {
 
-    static class CreateItem {
+    public static class CreateItem {
+        @Constraints.Required
         public String name;
+        @Constraints.Required
+        @Constraints.Min(0)
         public Double price;
     }
 
     static Shop shop = models.Shop.Shop;
 
     public static Result list() {
-        return ok(Json.toJson(shop.list()));
+        return render(
+                version(MimeTypes.HTML, () -> ok(views.html.list.render(shop.list()))),
+                version(MimeTypes.JSON, () -> ok(Json.toJson(shop.list())))
+        );
     }
 
-    @BodyParser.Of(BodyParser.Json.class)
+    public static Result createForm() {
+        return ok(views.html.createForm.render(Form.form(CreateItem.class)));
+    }
+
     public static Result create() {
-        JsonNode json = request().body().asJson();
-        CreateItem createItem;
-        try {
-            createItem = Json.fromJson(json, CreateItem.class);
-        } catch (RuntimeException e) {
-            return badRequest();
-        }
-        Item item = shop.create(createItem.name, createItem.price);
-        if (item != null) {
-            return ok(Json.toJson(item));
+        Form<CreateItem> submission = Form.form(CreateItem.class).bindFromRequest();
+        if (submission.hasErrors()) {
+            return render(
+                    version(MimeTypes.HTML, () -> badRequest(views.html.createForm.render(submission))),
+                    version(MimeTypes.JSON, () -> badRequest(submission.errorsAsJson()))
+            );
         } else {
-            return internalServerError();
+            CreateItem createItem = submission.get();
+            Item item = shop.create(createItem.name, createItem.price);
+            if (item != null) {
+                return render(
+                        version(MimeTypes.HTML, () -> redirect(routes.Items.details(item.id))),
+                        version(MimeTypes.JSON, () -> ok(Json.toJson(item)))
+                );
+            } else {
+                return internalServerError();
+            }
         }
     }
 
     public static Result details(Long id) {
         Item item = shop.get(id);
         if (item != null) {
-            return ok(Json.toJson(item));
+            return render(
+                    version(MimeTypes.HTML, () -> ok(views.html.details.render(item))),
+                    version(MimeTypes.JSON, () -> ok(Json.toJson(item)))
+            );
         } else {
             return notFound();
         }
     }
 
-    @BodyParser.Of(BodyParser.Json.class)
     public static Result update(Long id) {
-        JsonNode json = request().body().asJson();
-        CreateItem updateItem;
-        try {
-            updateItem = Json.fromJson(json, CreateItem.class);
-        } catch (RuntimeException e) {
-            return badRequest();
-        }
-        Item updated = shop.update(id, updateItem.name, updateItem.price);
-        if (updated != null) {
-            return ok(Json.toJson(updated));
+        Form<CreateItem> submission = Form.form(CreateItem.class).bindFromRequest();
+        if (submission.hasErrors()) {
+            return badRequest(submission.errorsAsJson());
         } else {
-            return internalServerError();
+            CreateItem updateItem = submission.get();
+            Item updated = shop.update(id, updateItem.name, updateItem.price);
+            if (updated != null) {
+                return ok(Json.toJson(updated));
+            } else {
+                return internalServerError();
+            }
         }
     }
 

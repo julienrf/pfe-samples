@@ -3,7 +3,7 @@ package models;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static shop.ShopApplication.runningShopApplication;
+import static shop.ShopApplication.withApplication;
 
 public class ShopTest {
 
@@ -11,7 +11,7 @@ public class ShopTest {
 
     @Test
     public void addItem() {
-        runningShopApplication(() -> {
+        withApplication(() -> {
             Item item = shop.create("Play Framework Essentials", 42.0);
             assertNotNull(item);
             assertEquals("Play Framework Essentials", item.name);
@@ -21,7 +21,7 @@ public class ShopTest {
 
     @Test
     public void listItem() {
-        runningShopApplication(() -> {
+        withApplication(() -> {
             Integer previousSize = shop.list().size();
             shop.create("Play Framework Essentials", 42.0);
             assertEquals(previousSize + 1, shop.list().size());
@@ -33,7 +33,7 @@ public class ShopTest {
 
     @Test
     public void getItem() {
-        runningShopApplication(() -> {
+        withApplication(() -> {
             Item createdItem = shop.create("Play Framework Essentials", 42.0);
             Item item = shop.get(createdItem.id);
             assertNotNull(item);
@@ -44,7 +44,7 @@ public class ShopTest {
 
     @Test
     public void updateItem() {
-        runningShopApplication(() -> {
+        withApplication(() -> {
             Item createdItem = shop.create("Play Framework Essentials", 42.0);
             Item updatedItem = shop.update(createdItem.id, createdItem.name, 10.0);
             assertNotNull(updatedItem);
@@ -58,7 +58,7 @@ public class ShopTest {
 
     @Test
     public void deleteItem() {
-        runningShopApplication(() -> {
+        withApplication(() -> {
             Item item = shop.create("Play Framework Essentials", 42.0);
             assertNotNull(shop.get(item.id));
             assertTrue(shop.delete(item.id));

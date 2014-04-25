@@ -7,6 +7,8 @@ GET           /                    controllers.Application.index
 
 GET           /items               controllers.Items.list
 POST          /items               controllers.Items.create
+POST          /items/add           controllers.Items.create
+GET           /items/add           controllers.Items.createForm
 GET           /items/:id           controllers.Items.details(id: Long)
 PUT           /items/:id           controllers.Items.update(id: Long)
 DELETE        /items/:id           controllers.Items.delete(id: Long)
