@@ -3,7 +3,10 @@
     <h2>Items list</h2>
     <ul>
     @for(item <- items) {
-        <li><a href="@routes.Items.details(item.id)">@item.name</a></li>
+        <li>
+            <a href="@routes.Items.details(item.id)">@item.name</a>
+            <button class="delete-item" data-id="@item.id">Delete</button>
+        </li>
     }
     </ul>
     <a href="@routes.Items.createForm()">Add a new item</a>
