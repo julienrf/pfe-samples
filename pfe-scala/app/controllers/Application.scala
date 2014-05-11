@@ -2,6 +2,7 @@ package controllers
 
 import play.api.mvc._
 import play.api.Routes
+import play.twirl.api.JavaScript
 
 object Application extends Controller {
 
@@ -10,9 +11,10 @@ object Application extends Controller {
   }
 
   def javascriptRouter = Action { implicit request =>
-    Ok(Routes.javascriptRouter("routes")(
+    val router = Routes.javascriptRouter("routes")(
       routes.javascript.Items.delete
-    ))
+    )
+    Ok(JavaScript(s"""define(function () { $router; return routes })"""))
   }
 
 }

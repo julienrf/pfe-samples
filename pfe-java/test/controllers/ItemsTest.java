@@ -86,11 +86,11 @@ public class ItemsTest {
     }
 
     FakeRequest jsonRequest(Call call, JsonNode body) {
-        return fakeRequest(call.method(), call.url()).withJsonBody(body).withHeader(ACCEPT, Http.MimeTypes.JSON);
+        return fakeRequest(call).withJsonBody(body).withHeader(ACCEPT, Http.MimeTypes.JSON);
     }
 
     FakeRequest jsonRequest(Call call) {
-        return fakeRequest(call.method(), call.url()).withHeader(ACCEPT, Http.MimeTypes.JSON);
+        return fakeRequest(call).withHeader(ACCEPT, Http.MimeTypes.JSON);
     }
 
 }

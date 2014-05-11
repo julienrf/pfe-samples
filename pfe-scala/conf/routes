@@ -15,4 +15,4 @@ DELETE        /items/:id             controllers.Items.delete(id: Long)
 
 GET           /assets/javascripts/routes.js  controllers.Application.javascriptRouter
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file          controllers.Assets.at(path="/public", file)
+GET           /assets/*file          controllers.Assets.versioned(path="/public", file: Asset)
