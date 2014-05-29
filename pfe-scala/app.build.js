@@ -11,6 +11,9 @@
     modules: [
       {
         name: "shop"
+      },
+      {
+        name: "auction"
       }
     ],
     onBuildWrite: buildWriter,

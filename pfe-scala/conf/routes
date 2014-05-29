@@ -3,16 +3,22 @@
 # ~~~~
 
 # Home page
-GET           /                      controllers.Application.index
+GET           /                                       controllers.Application.index
 
-GET           /items                 controllers.Items.list
-POST          /items                 controllers.Items.create
-POST          /items/add             controllers.Items.create
-GET           /items/add             controllers.Items.createForm
-GET           /items/$id<\d+>        controllers.Items.details(id: Long)
-PUT           /items/:id             controllers.Items.update(id: Long)
-DELETE        /items/:id             controllers.Items.delete(id: Long)
+GET           /items                                  controllers.Items.list
+POST          /items                                  controllers.Items.create
+POST          /items/add                              controllers.Items.create
+GET           /items/add                              controllers.Items.createForm
+GET           /items/$id<\d+>                         controllers.Items.details(id: Long)
+PUT           /items/:id                              controllers.Items.update(id: Long)
+DELETE        /items/:id                              controllers.Items.delete(id: Long)
 
-GET           /assets/javascripts/routes.js  controllers.Application.javascriptRouter
+GET           /items/:id/auction                      controllers.Auctions.room(id: Long)
+GET           /items/:id/auction-ws                   controllers.Auctions.roomWs(id: Long)
+POST          /items/:id/auction                      controllers.Auctions.bid(id: Long)
+GET           /items/:id/auction/notifications        controllers.Auctions.notifications(id: Long)
+GET           /items/:id/auction/channel              controllers.Auctions.channel(id: Long)
+
+GET           /assets/javascripts/routes.js           controllers.Application.javascriptRouter
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file          controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)

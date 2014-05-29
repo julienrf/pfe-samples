@@ -11,7 +11,10 @@ public class Application extends Controller {
 
     public static Result javascriptRouter() {
         return ok(Routes.javascriptRouter("routes",
-                routes.javascript.Items.delete()));
+                routes.javascript.Items.delete(),
+                routes.javascript.Auctions.bid(),
+                routes.javascript.Auctions.notifications(),
+                routes.javascript.Auctions.channel()));
     }
 
 }

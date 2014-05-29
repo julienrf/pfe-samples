@@ -1,0 +1,11 @@
+@(item: models.Item)
+
+@import play.libs.Json
+
+@layout {
+    <h2>Auction room</h2>
+    <p><strong>@item.name</strong>: @(f"${item.price}%.2f")&nbsp;€</p>
+    <div id="auction-room" data-state="@Json.toJson(item).toString"></div>
+    <script src="@routes.Application.javascriptRouter()"></script>
+    <script src="@routes.Assets.at("javascripts/auction-ws.js")"></script>
+}
