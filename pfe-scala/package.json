@@ -1,8 +1,0 @@
-{
-  "name": "pfe-scala",
-  "version": "1.0.0",
-  "dependencies": {
-    "qajax": "0.2.x",
-    "requirejs": "2.1.x"
-  }
-}
