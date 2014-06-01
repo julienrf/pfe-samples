@@ -12,7 +12,10 @@ object Application extends Controller {
 
   def javascriptRouter = Action { implicit request =>
     val router = Routes.javascriptRouter("routes")(
-      routes.javascript.Items.delete
+      routes.javascript.Items.delete,
+      routes.javascript.Auctions.bid,
+      routes.javascript.Auctions.notifications,
+      routes.javascript.Auctions.channel
     )
     Ok(JavaScript(s"""define(function () { $router; return routes })"""))
   }

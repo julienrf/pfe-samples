@@ -12,7 +12,10 @@ public class Application extends Controller {
 
     public static Result javascriptRouter() {
         JavaScript router = Routes.javascriptRouter("routes",
-                controllers.routes.javascript.Items.delete()
+                routes.javascript.Items.delete(),
+                routes.javascript.Auctions.bid(),
+                routes.javascript.Auctions.notifications(),
+                routes.javascript.Auctions.channel()
         );
         return ok(JavaScript.apply("define(function () { " + router.body() + "; return routes })"));
     }
