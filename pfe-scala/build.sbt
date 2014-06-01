@@ -9,6 +9,8 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "1.9.5" % "test"
 )
 
+resolvers += "Typesafe Maven Repository" at "http://repo.typesafe.com/typesafe/maven-releases/"
+
 scalacOptions += "-feature"
 
 includeFilter in (Assets, LessKeys.less) := "shop.less"

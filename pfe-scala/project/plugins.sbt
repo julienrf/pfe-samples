@@ -3,7 +3,7 @@ logLevel := Level.Warn
 
 resolvers += "Typesafe" at "http://repo.typesafe.com/typesafe/releases/"
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.0-RC2")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-coffeescript" % "1.0.0")
 

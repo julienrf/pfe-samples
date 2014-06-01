@@ -6,6 +6,5 @@
     <h2>Auction room</h2>
     <p><strong>@item.name</strong>: @(f"${item.price}%.2f")&nbsp;€</p>
     <div id="auction-room" data-state="@Json.toJson(item).toString"></div>
-    <script src="@routes.Application.javascriptRouter()"></script>
-    <script src="@routes.Assets.at("javascripts/auction.js")"></script>
+    <script data-main="@routes.Assets.versioned("javascripts/auction.js")" src="@routes.Assets.versioned("lib/requirejs/require.js")"></script>
 }

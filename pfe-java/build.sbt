@@ -8,6 +8,8 @@ libraryDependencies ++= Seq(
   "org.webjars" % "requirejs" % "2.1.11-1"
 )
 
+resolvers += "Typesafe Maven Repository" at "http://repo.typesafe.com/typesafe/maven-releases/"
+
 includeFilter in (Assets, LessKeys.less) := "shop.less"
 
 pipelineStages := Seq(rjs, gzip, digest)
