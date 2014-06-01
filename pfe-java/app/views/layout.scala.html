@@ -3,13 +3,11 @@
 <html>
     <head>
         <title>Shop — Play Framework Essentials</title>
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/shop.css")"/>
-        <link rel="favicon" href="@routes.Assets.at("images/favicon.png")"/>
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/shop.css")"/>
+        <link rel="favicon" href="@routes.Assets.versioned("images/favicon.png")"/>
     </head>
     <body>
         <h1><a href="@routes.Items.list()">Shop</a></h1>
         @content
-        <script src="@routes.Application.javascriptRouter()"></script>
-        <script src="@routes.Assets.at("javascripts/shop.js")"></script>
     </body>
 </html>
