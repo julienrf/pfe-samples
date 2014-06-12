@@ -16,10 +16,15 @@ import static play.libs.EventSource.Event.event;
 public class Auctions extends Controller {
 
     public static Result room(Long id) {
-        Item item = Shop.Shop.get(id);
-        if (item != null) {
-            return ok(views.html.auctionRoom.render(item));
-        } else return notFound();
+        String username = session("username");
+        if (username != null) {
+            Item item = Shop.Shop.get(id);
+            if (item != null) {
+                return ok(views.html.auctionRoom.render(item));
+            } else return notFound();
+        } else {
+            return redirect(routes.Authentication.login(request().uri()));
+        }
     }
 
     @BodyParser.Of(BodyParser.Json.class)

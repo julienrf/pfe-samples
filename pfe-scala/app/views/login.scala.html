@@ -1,0 +1,15 @@
+@(form: Form[Authentication.Login], returnTo: String)
+
+@layout {
+    <h1>Please sign in</h1>
+    @helper.form(routes.Authentication.authenticate(returnTo)) {
+        <ul>
+            @for(error <- form.globalErrors) {
+                <li>@error.message</li>
+            }
+        </ul>
+        @helper.inputText(form("username"), '_label -> "Name")
+        @helper.inputPassword(form("password"), '_label -> "Password")
+        <button>Sign in</button>
+    }
+}

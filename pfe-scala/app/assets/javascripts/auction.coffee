@@ -5,10 +5,6 @@ require(['routes'], (routes) ->
       @root = document.createElement('div')
       @bids = document.createElement('ul')
       @root.appendChild(@bids)
-      name = document.createElement('input')
-      name.type = 'text'
-      name.placeholder = 'Your name'
-      name.required = 'required'
       bid = document.createElement('input')
       bid.type = 'number'
       bid.placeholder = 'Your offer'
@@ -16,11 +12,10 @@ require(['routes'], (routes) ->
       bid.required = 'required'
       btn = document.createElement('button')
       btn.textContent = 'Bid!'
-      @root.appendChild(name)
       @root.appendChild(bid)
       @root.appendChild(btn)
       btn.addEventListener('click', () ->
-        ctl.bidClicked(name.value, bid.value)
+        ctl.bidClicked(bid.value)
       )
     updateBids: (bids) ->
       ul = document.createElement('ul')
@@ -40,13 +35,13 @@ require(['routes'], (routes) ->
         bid = JSON.parse(e.data)
         @addBid(bid.name, bid.price)
       )
-    bidClicked: (name, price) ->
-      if name != '' && price > @item.price
+    bidClicked: (price) ->
+      if price > @item.price
         xhr = new XMLHttpRequest()
         route = routes.controllers.Auctions.bid(@item.id)
         xhr.open(route.method, route.url)
         xhr.setRequestHeader('Content-Type', 'application/json')
-        xhr.send(JSON.stringify({ name: name, price: +price }))
+        xhr.send(JSON.stringify({ price: +price }))
       else
         alert('Please enter your name and bid!')
     addBid: (name, price) ->

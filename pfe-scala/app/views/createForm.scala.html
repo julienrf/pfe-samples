@@ -1,7 +1,7 @@
-@(form: Form[CreateItem])
+@(form: Form[CreateItem])(implicit header: RequestHeader)
 @layout {
     <h2>Add an item</h2>
-    @helper.form(routes.Items.create()) {
+    @helper.form(helper.CSRF(routes.Items.create())) {
         @helper.inputText(form("name"), '_label -> "Name")
         @helper.inputText(form("price"), '_label -> "Price")
         <button>Save</button>

@@ -5,6 +5,10 @@
 # Home page
 GET           /                                       controllers.Application.index()
 
+GET           /login                                  controllers.Authentication.login(returnTo)
+POST          /authenticate                           controllers.Authentication.authenticate(returnTo)
+GET           /logout                                 controllers.Authentication.logout
+
 GET           /items                                  controllers.Items.list()
 POST          /items                                  controllers.Items.create()
 POST          /items/add                              controllers.Items.create()

@@ -57,7 +57,7 @@ object Items extends Controller {
     }
   }
 
-  val createForm = Action {
+  val createForm = Action { implicit request =>
     Ok(views.html.createForm(CreateItem.form))
   }
 

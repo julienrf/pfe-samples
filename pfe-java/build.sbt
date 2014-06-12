@@ -3,6 +3,7 @@ name := "pfe-java"
 version := "1.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
+  filters,
   javaJpa.exclude("org.hibernate.javax.persistence", "hibernate-jpa-2.0-api"),
   "org.hibernate" % "hibernate-entitymanager" % "4.3.4.Final",
   "org.webjars" % "requirejs" % "2.1.11-1"

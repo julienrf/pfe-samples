@@ -1,6 +1,6 @@
 package controllers
 
-import play.api.mvc._
+import play.api.mvc.{Controller, Action}
 import play.api.Routes
 import play.twirl.api.JavaScript
 
