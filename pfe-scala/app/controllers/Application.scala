@@ -3,11 +3,15 @@ package controllers
 import play.api.mvc.{Controller, Action}
 import play.api.Routes
 import play.twirl.api.JavaScript
+import play.api.cache.Cached
+import play.api.Play.current
 
 object Application extends Controller {
 
-  def index = Action {
-    Ok(views.html.main())
+  val index = Cached("main-html") {
+    Action {
+      Ok(views.html.main())
+    }
   }
 
   def javascriptRouter = Action { implicit request =>
