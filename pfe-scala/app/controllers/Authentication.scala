@@ -4,6 +4,7 @@ import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms.{tuple, nonEmptyText}
 import scala.Some
+import play.api.i18n.Messages
 
 object Authentication extends Controller {
 
@@ -19,7 +20,7 @@ object Authentication extends Controller {
     ))
   }
 
-  def login(returnTo: String) = Action {
+  def login(returnTo: String) = Action { implicit request =>
     Ok(views.html.login(Login.form, returnTo))
   }
 
@@ -32,7 +33,7 @@ object Authentication extends Controller {
           if (users.authenticate(username, password)) {
             Redirect(returnTo).addingToSession(UserKey -> username)
           } else {
-            BadRequest(views.html.login(submission.withGlobalError("Unknown user!"), returnTo))
+            BadRequest(views.html.login(submission.withGlobalError(Messages("auth.unknown", username)), returnTo))
           }
       }
     )

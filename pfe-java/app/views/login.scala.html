@@ -2,7 +2,7 @@
 
 @layout {
     <h1>Please sign in</h1>
-    @helper.form(routes.Authentication.authenticate(returnTo)) {
+    @helper.form(helper.CSRF(routes.Authentication.authenticate(returnTo))) {
         <ul>
             @for(error <- form.globalErrors) {
                 <li>@error.message</li>

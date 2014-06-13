@@ -9,7 +9,8 @@ public interface Users {
     public final static Users Users = new Users() {
         @Override
         public Boolean authenticate(String username, String password) {
-            return null;
+            return knownUsers.entrySet().stream()
+                    .anyMatch(entry -> entry.getKey().equals(username) && entry.getValue().equals(password));
         }
     };
 

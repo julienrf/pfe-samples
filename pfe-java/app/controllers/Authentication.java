@@ -3,6 +3,7 @@ package controllers;
 import models.Users;
 import play.data.Form;
 import play.data.validation.Constraints;
+import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -33,7 +34,7 @@ public class Authentication extends Controller {
                 session().put(UserKey, login.username);
                 return redirect(returnTo);
             } else {
-                submission.reject("Unknown user!");
+                submission.reject(Messages.get("auth.unknown", login.username));
                 return badRequest(views.html.login.render(submission, returnTo));
             }
         }

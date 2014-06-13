@@ -1,0 +1,3 @@
+index=Juste Play Java
+
+auth.unknown=Utilisateur inconnu : {0}

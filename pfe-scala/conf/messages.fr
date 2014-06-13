@@ -1,0 +1,3 @@
+index=Juste Play Scala
+
+auth.unknown=Utilisateur inconnu : {0}
