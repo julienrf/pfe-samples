@@ -2,6 +2,7 @@ package controllers;
 
 import models.Item;
 import models.Shop;
+import models.SocialNetwork;
 import play.core.j.HttpExecutionContext;
 import play.data.Form;
 import play.data.validation.Constraints;
@@ -28,6 +29,8 @@ public class Items extends Controller {
     }
 
     static Shop shop = models.Shop.Shop;
+
+    static SocialNetwork socialNetwork = models.SocialNetwork.SocialNetwork;
 
     static ExecutionContext jdbcEC = Akka.system().dispatchers().lookup("jdbc-execution-context");
 
@@ -108,6 +111,16 @@ public class Items extends Controller {
                 return badRequest();
             }
         });
+    }
+
+    public static Result share(Long id) {
+        String token = session().get(OAuth.TOKEN_KEY);
+        if (token != null) {
+            socialNetwork.share(routes.Items.details(id).absoluteURL(request()), token);
+            return ok();
+        } else {
+            return redirect(OAuth.authorizeUrl(routes.Items.details(id)));
+        }
     }
 
 }

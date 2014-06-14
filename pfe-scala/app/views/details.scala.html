@@ -1,5 +1,8 @@
-@(item: models.Item)
+@(item: models.Item)(implicit request: RequestHeader)
 @layout {
     <h2>Item details</h2>
     <p><strong>@item.name</strong>: @(f"${item.price}%.2f")&nbsp;€</p>
+    @helper.form(helper.CSRF(routes.Items.share(item.id))) {
+        <button>Share</button>
+    }
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface Users {
+
     Boolean authenticate(String username, String password);
 
     public final static Users Users = new Users() {

@@ -6,6 +6,7 @@ libraryDependencies ++= Seq(
   jdbc,
   filters,
   cache,
+  ws,
   "com.typesafe.slick" %% "slick" % "2.0.1",
   "org.webjars" % "requirejs" % "2.1.11-1",
   "org.mockito" % "mockito-core" % "1.9.5" % "test"

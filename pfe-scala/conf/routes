@@ -7,6 +7,8 @@ GET           /login                                  controllers.Authentication
 POST          /authenticate                           controllers.Authentication.authenticate(returnTo)
 GET           /logout                                 controllers.Authentication.logout
 
+GET           /oauth/callback                         controllers.OAuth.callback
+
 GET           /items                                  controllers.Items.list
 POST          /items                                  controllers.Items.create
 POST          /items/add                              controllers.Items.create
@@ -14,6 +16,7 @@ GET           /items/add                              controllers.Items.createFo
 GET           /items/$id<\d+>                         controllers.Items.details(id: Long)
 PUT           /items/:id                              controllers.Items.update(id: Long)
 DELETE        /items/:id                              controllers.Items.delete(id: Long)
+POST          /items/:id/share                        controllers.Items.share(id: Long)
 
 GET           /items/:id/auction                      controllers.Auctions.room(id: Long)
 GET           /items/:id/auction-ws                   controllers.Auctions.roomWs(id: Long)

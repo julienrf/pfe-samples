@@ -1,5 +1,6 @@
 package controllers
 
+import play.api.libs.ws.WS
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 import models.Item
@@ -22,6 +23,8 @@ object CreateItem {
 object Items extends Controller {
 
   val shop = models.Shop
+
+  val socialNetwork = models.SocialNetwork
 
   implicit val writesItem = Json.writes[Item]
 
@@ -88,6 +91,16 @@ object Items extends Controller {
   def delete(id: Long) = Action.async {
     Future {
       if (shop.delete(id)) Ok else BadRequest
+    }
+  }
+
+  def share(id: Long) = Action { implicit request =>
+    request.session.get(OAuth.tokenKey) match {
+      case Some(token) =>
+        socialNetwork.share(routes.Items.details(id).absoluteURL(), token)
+        Ok
+      case None =>
+        Redirect(OAuth.authorizeUrl(routes.Items.details(id)))
     }
   }
 
