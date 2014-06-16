@@ -1,6 +1,5 @@
 package controllers
 
-import play.api.libs.ws.WS
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 import models.Item
@@ -8,8 +7,6 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text, of}
 import play.api.data.format.Formats.doubleFormat
 import play.api.data.validation.Constraints
-import play.api.libs.concurrent.Akka
-import scala.concurrent.Future
 
 case class CreateItem(name: String, price: Double)
 
@@ -28,70 +25,58 @@ object Items extends Controller {
 
   implicit val writesItem = Json.writes[Item]
 
-  implicit val jdbcEC = Akka.system(play.api.Play.current).dispatchers.lookup("jdbc-execution-context")
-
-  val list = Action.async { implicit request =>
-    Future {
-      val items = shop.list()
-      render {
-        case Accepts.Html() => Ok(views.html.list(items))
-        case Accepts.Json() => Ok(Json.toJson(items))
-      }
+  val list = DBAction { implicit request =>
+    val items = shop.list()
+    render {
+      case Accepts.Html() => Ok(views.html.list(items))
+      case Accepts.Json() => Ok(Json.toJson(items))
     }
   }
 
-  val create = Action.async { implicit request =>
-    Future {
-      CreateItem.form.bindFromRequest().fold(
-        formWithErrors => render {
-          case Accepts.Html() => BadRequest(views.html.createForm(formWithErrors))
-          case Accepts.Json() => BadRequest(formWithErrors.errorsAsJson)
-        },
-        createItem => {
-          shop.create(createItem.name, createItem.price) match {
-            case Some(item) => render {
-              case Accepts.Html() => Redirect(routes.Items.details(item.id))
-              case Accepts.Json() => Ok(Json.toJson(item))
-            }
-            case None => InternalServerError
+  val create = DBAction { implicit request =>
+    CreateItem.form.bindFromRequest().fold(
+      formWithErrors => render {
+        case Accepts.Html() => BadRequest(views.html.createForm(formWithErrors))
+        case Accepts.Json() => BadRequest(formWithErrors.errorsAsJson)
+      },
+      createItem => {
+        shop.create(createItem.name, createItem.price) match {
+          case Some(item) => render {
+            case Accepts.Html() => Redirect(routes.Items.details(item.id))
+            case Accepts.Json() => Ok(Json.toJson(item))
           }
+          case None => InternalServerError
         }
-      )
-    }
+      }
+    )
   }
 
   val createForm = Action { implicit request =>
     Ok(views.html.createForm(CreateItem.form))
   }
 
-  def details(id: Long) = Action.async { implicit request =>
-    Future {
-      shop.get(id) match {
-        case Some(item) => render {
-          case Accepts.Html() => Ok(views.html.details(item))
-          case Accepts.Json() => Ok(Json.toJson(item))
-        }
-        case None => NotFound
+  def details(id: Long) = DBAction { implicit request =>
+    shop.get(id) match {
+      case Some(item) => render {
+        case Accepts.Html() => Ok(views.html.details(item))
+        case Accepts.Json() => Ok(Json.toJson(item))
       }
+      case None => NotFound
     }
   }
 
-  def update(id: Long) = Action.async { implicit request =>
-    Future {
-      CreateItem.form.bindFromRequest().fold(
-        formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-        updateItem => shop.update(id, updateItem.name, updateItem.price) match {
-          case Some(item) => Ok(Json.toJson(item))
-          case None => InternalServerError
-        }
-      )
-    }
+  def update(id: Long) = DBAction { implicit request =>
+    CreateItem.form.bindFromRequest().fold(
+      formWithErrors => BadRequest(formWithErrors.errorsAsJson),
+      updateItem => shop.update(id, updateItem.name, updateItem.price) match {
+        case Some(item) => Ok(Json.toJson(item))
+        case None => InternalServerError
+      }
+    )
   }
 
-  def delete(id: Long) = Action.async {
-    Future {
-      if (shop.delete(id)) Ok else BadRequest
-    }
+  def delete(id: Long) = DBAction {
+    if (shop.delete(id)) Ok else BadRequest
   }
 
   def share(id: Long) = Action { implicit request =>
