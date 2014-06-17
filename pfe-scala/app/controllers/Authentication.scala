@@ -1,6 +1,7 @@
 package controllers
 
 import play.api.mvc._
+import play.api.mvc.Results.Redirect
 import play.api.data.Form
 import play.api.data.Forms.{tuple, nonEmptyText}
 import play.api.i18n.Messages
@@ -49,17 +50,14 @@ object Authentication extends Controller {
       case None => g
     }
 
-  def authenticatedAction(f: String => Result)(implicit request: RequestHeader): Result =
-    authenticated(f, Redirect(routes.Authentication.login(request.uri)))
-
 }
 
-class AuthenticatedRequest[+A](val username: String, request: Request[A]) extends WrappedRequest[A](request)
+class AuthenticatedRequest[A](val username: String, request: Request[A]) extends WrappedRequest[A](request)
 
 object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest] {
   def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]) =
     Authentication.authenticated(
       username => block(new AuthenticatedRequest(username, request)),
       Future.successful(Redirect(routes.Authentication.login(request.uri)))
-    )
+    )(request)
 }

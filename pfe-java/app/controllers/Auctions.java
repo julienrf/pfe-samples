@@ -16,6 +16,11 @@ import static play.libs.EventSource.Event.event;
 
 public class Auctions extends Controller {
 
+    public static class CreateBid {
+        public Double price;
+        public CreateBid() {}
+    }
+
     @Authenticated
     public static Result room(Long id) {
         Item item = Shop.Shop.get(id);
@@ -27,8 +32,8 @@ public class Auctions extends Controller {
     @Authenticated
     @BodyParser.Of(BodyParser.Json.class)
     public static Result bid(Long id) {
-        AuctionRooms.Bid bid = Json.fromJson(request().body().asJson(), AuctionRooms.Bid.class);
-        AuctionRooms.bid(id, bid.name, bid.price);
+        CreateBid bid = Json.fromJson(request().body().asJson(), CreateBid.class);
+        AuctionRooms.bid(id, AuthenticatedAction.getUsername(ctx()), bid.price);
         return ok();
     }
 
@@ -52,11 +57,11 @@ public class Auctions extends Controller {
         } else return notFound();
     }
 
-    public static WebSocket<JsonNode> channel(Long id) {
-        return WebSocket.whenReady((in, out) -> {
+    public static WebSocket<JsonNode> channel(Long id) throws Throwable {
+        return Authentication.authenticated(ctx(), username -> WebSocket.<JsonNode>whenReady((in, out) -> {
             in.onMessage(json -> {
-                AuctionRooms.Bid bid = Json.fromJson(json, AuctionRooms.Bid.class);
-                AuctionRooms.bid(id, bid.name, bid.price);
+                CreateBid bid = Json.fromJson(json, CreateBid.class);
+                AuctionRooms.bid(id, username, bid.price);
             });
             AuctionRooms
                     .subscribe(id, bid -> out.write(Json.toJson(bid)))
@@ -65,8 +70,8 @@ public class Auctions extends Controller {
                             out.write(Json.toJson(bid));
                         }
                         in.onClose(stateAndSubscription._2::cancel);
-            });
-        });
+                    });
+        }), () -> WebSocket.reject(forbidden()));
     }
 
 }

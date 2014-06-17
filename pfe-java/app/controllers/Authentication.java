@@ -18,7 +18,7 @@ public class Authentication extends Controller {
         public String password;
     }
 
-    static final String UserKey = "username";
+    static final String USER_KEY = "username";
 
     static final Users users = models.Users.Users;
 
@@ -33,7 +33,7 @@ public class Authentication extends Controller {
         } else {
             Login login = submission.get();
             if (users.authenticate(login.username, login.password)) {
-                session().put(UserKey, login.username);
+                session().put(USER_KEY, login.username);
                 return redirect(returnTo);
             } else {
                 submission.reject(Messages.get("auth.unknown", login.username));
@@ -43,12 +43,12 @@ public class Authentication extends Controller {
     }
 
     public static Result logout() {
-        session().remove(UserKey);
+        session().remove(USER_KEY);
         return redirect(routes.Items.list());
     }
 
     public static <A> A authenticated(Http.Context ctx, F.Function<String, A> f, F.Function0<A> g) throws Throwable {
-        String username = ctx.session().get(UserKey);
+        String username = ctx.session().get(USER_KEY);
         if (username != null) {
             return f.apply(username);
         } else {

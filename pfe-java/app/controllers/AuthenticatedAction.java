@@ -21,9 +21,13 @@ public class AuthenticatedAction extends Action.Simple {
     @Override
     public F.Promise<Result> call(Http.Context ctx) throws Throwable {
         return Authentication.authenticated(ctx, username -> {
-            ctx.args.put(Authentication.UserKey, username);
+            ctx.args.put(Authentication.USER_KEY, username);
             return delegate.call(ctx);
         }, () -> F.Promise.pure(redirect(routes.Authentication.login(ctx.request().uri()))));
+    }
+
+    public static String getUsername(Http.Context ctx) {
+        return (String)(ctx.args.get(Authentication.USER_KEY));
     }
 
 }
