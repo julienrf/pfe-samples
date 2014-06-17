@@ -4,7 +4,9 @@ import models.Users;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.i18n.Messages;
+import play.libs.F;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
 public class Authentication extends Controller {
@@ -43,6 +45,15 @@ public class Authentication extends Controller {
     public static Result logout() {
         session().remove(UserKey);
         return redirect(routes.Items.list());
+    }
+
+    public static <A> A authenticated(Http.Context ctx, F.Function<String, A> f, F.Function0<A> g) throws Throwable {
+        String username = ctx.session().get(UserKey);
+        if (username != null) {
+            return f.apply(username);
+        } else {
+            return g.apply();
+        }
     }
 
 }

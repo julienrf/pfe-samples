@@ -11,22 +11,20 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.WebSocket;
 
+import static controllers.AuthenticatedAction.Authenticated;
 import static play.libs.EventSource.Event.event;
 
 public class Auctions extends Controller {
 
+    @Authenticated
     public static Result room(Long id) {
-        String username = session("username");
-        if (username != null) {
-            Item item = Shop.Shop.get(id);
-            if (item != null) {
-                return ok(views.html.auctionRoom.render(item));
-            } else return notFound();
-        } else {
-            return redirect(routes.Authentication.login(request().uri()));
-        }
+        Item item = Shop.Shop.get(id);
+        if (item != null) {
+            return ok(views.html.auctionRoom.render(item));
+        } else return notFound();
     }
 
+    @Authenticated
     @BodyParser.Of(BodyParser.Json.class)
     public static Result bid(Long id) {
         AuctionRooms.Bid bid = Json.fromJson(request().body().asJson(), AuctionRooms.Bid.class);
@@ -34,6 +32,7 @@ public class Auctions extends Controller {
         return ok();
     }
 
+    @Authenticated
     public static Result notifications(Long id) {
         return ok(EventSource.whenConnected(eventSource -> AuctionRooms
                 .subscribe(id, (bid) -> eventSource.send(event(Json.toJson(bid))))
@@ -45,6 +44,7 @@ public class Auctions extends Controller {
         })));
     }
 
+    @Authenticated
     public static Result roomWs(Long id) {
         Item item = Shop.Shop.get(id);
         if (item != null) {

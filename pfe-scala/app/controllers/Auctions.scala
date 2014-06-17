@@ -20,43 +20,31 @@ object Auctions extends Controller {
 
   val bidValidator = (__ \ "price").read[Double]
 
-  def room(id: Long) = Action { implicit request =>
-    request.session.get(Authentication.UserKey) match {
-      case Some(username) =>
-        shop.get(id) match {
-          case Some(item) => Ok(views.html.auctionRoom(item))
-          case None => NotFound
-        }
-      case None =>
-        Redirect(routes.Authentication.login(request.uri))
+  def room(id: Long) = AuthenticatedAction { implicit request =>
+    shop.get(id) match {
+      case Some(item) => Ok(views.html.auctionRoom(item))
+      case None => NotFound
     }
   }
 
-  def bid(id: Long) = Action(parse.json) { implicit request =>
-    Authentication.authenticatedAction { username =>
+  def bid(id: Long) = AuthenticatedAction(parse.json) { implicit request =>
       for (bid <- request.body.validate(bidValidator)) {
-        AuctionRooms.bid(id, username, bid)
+        AuctionRooms.bid(id, request.username, bid)
       }
       Ok
+  }
+
+  def notifications(id: Long) = AuthenticatedAction.async { implicit request =>
+    AuctionRooms.notifications(id).map { case (currentState, notifications) =>
+      val allNotifications = Enumerator(currentState.to[Seq]: _*) andThen notifications
+      Ok.chunked(allNotifications &> Json.toJson[Bid] &> EventSource()).as(EVENT_STREAM)
     }
   }
 
-  def notifications(id: Long) = Action.async { implicit request =>
-    Authentication.authenticated(
-      _ => AuctionRooms.notifications(id).map { case (currentState, notifications) =>
-        val allNotifications = Enumerator(currentState.to[Seq]: _*) andThen notifications
-        Ok.chunked(allNotifications &> Json.toJson[Bid] &> EventSource()).as(EVENT_STREAM)
-      },
-      Future.successful(Redirect(routes.Authentication.login(request.uri)))
-    )
-  }
-
-  def roomWs(id: Long) = Action { implicit request =>
-    Authentication.authenticatedAction { username =>
-      shop.get(id) match {
-        case Some(item) => Ok(views.html.auctionRoomWs(item))
-        case None => NotFound
-      }
+  def roomWs(id: Long) = AuthenticatedAction { implicit request =>
+    shop.get(id) match {
+      case Some(item) => Ok(views.html.auctionRoomWs(item))
+      case None => NotFound
     }
   }
 
