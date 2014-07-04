@@ -1,20 +1,26 @@
 package controllers;
 
 import models.Item;
-import models.Shop;
-import models.SocialNetwork;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import static controllers.DBAction.DB;
 import static controllers.Render.render;
 import static controllers.Render.version;
 import static play.mvc.Http.MimeTypes;
 
+@Singleton
 public class Items extends Controller {
+
+    @Inject
+    public Items(Service service) {
+        super(service);
+    }
 
     public static class CreateItem {
         @Constraints.Required
@@ -24,24 +30,20 @@ public class Items extends Controller {
         public Double price;
     }
 
-    static Shop shop = models.Shop.Shop;
-
-    static SocialNetwork socialNetwork = models.SocialNetwork.SocialNetwork;
-
     @DB
-    public static Result list() {
+    public Result list() {
         return render(
-            version(MimeTypes.HTML, () -> ok(views.html.list.render(shop.list()))),
-            version(MimeTypes.JSON, () -> ok(Json.toJson(shop.list())))
+            version(MimeTypes.HTML, () -> ok(views.html.list.render(service.shop.list()))),
+            version(MimeTypes.JSON, () -> ok(Json.toJson(service.shop.list())))
         );
     }
 
-    public static Result createForm() {
+    public Result createForm() {
         return ok(views.html.createForm.render(Form.form(CreateItem.class)));
     }
 
     @DB
-    public static Result create() {
+    public Result create() {
         Form<CreateItem> submission = Form.form(CreateItem.class).bindFromRequest();
         if (submission.hasErrors()) {
             return render(
@@ -50,7 +52,7 @@ public class Items extends Controller {
             );
         } else {
             CreateItem createItem = submission.get();
-            Item item = shop.create(createItem.name, createItem.price);
+            Item item = service.shop.create(createItem.name, createItem.price);
             if (item != null) {
                 return render(
                         version(MimeTypes.HTML, () -> redirect(routes.Items.details(item.id))),
@@ -63,8 +65,8 @@ public class Items extends Controller {
     }
 
     @DB
-    public static Result details(Long id) {
-        Item item = shop.get(id);
+    public Result details(Long id) {
+        Item item = service.shop.get(id);
         if (item != null) {
             return render(
                     version(MimeTypes.HTML, () -> ok(views.html.details.render(item))),
@@ -76,13 +78,13 @@ public class Items extends Controller {
     }
 
     @DB
-    public static Result update(Long id) {
+    public Result update(Long id) {
         Form<CreateItem> submission = Form.form(CreateItem.class).bindFromRequest();
         if (submission.hasErrors()) {
             return badRequest(submission.errorsAsJson());
         } else {
             CreateItem updateItem = submission.get();
-            Item updated = shop.update(id, updateItem.name, updateItem.price);
+            Item updated = service.shop.update(id, updateItem.name, updateItem.price);
             if (updated != null) {
                 return ok(Json.toJson(updated));
             } else {
@@ -92,18 +94,18 @@ public class Items extends Controller {
     }
 
     @DB
-    public static Result delete(Long id) {
-        if (shop.delete(id)) {
+    public Result delete(Long id) {
+        if (service.shop.delete(id)) {
             return ok();
         } else {
             return badRequest();
         }
     }
 
-    public static Result share(Long id) {
+    public Result share(Long id) {
         String token = session().get(OAuth.TOKEN_KEY);
         if (token != null) {
-            socialNetwork.share(routes.Items.details(id).absoluteURL(request()), token);
+            service.socialNetwork.share(routes.Items.details(id).absoluteURL(request()), token);
             return ok();
         } else {
             return redirect(OAuth.authorizeUrl(routes.Items.details(id)));

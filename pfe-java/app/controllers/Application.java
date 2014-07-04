@@ -1,19 +1,27 @@
 package controllers;
 
 import play.Routes;
-import play.cache.Cache;
 import play.cache.Cached;
-import play.mvc.*;
+import play.mvc.Result;
 import play.twirl.api.JavaScript;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class Application extends Controller {
 
+    @Inject
+    public Application(Service service) {
+        super(service);
+    }
+
     @Cached(key = "main-html")
-    public static Result index() {
+    public Result index() {
         return ok(views.html.main.render());
     }
 
-    public static Result javascriptRouter() {
+    public Result javascriptRouter() {
         JavaScript router = Routes.javascriptRouter("routes",
                 routes.javascript.Items.delete(),
                 routes.javascript.Auctions.bid(),

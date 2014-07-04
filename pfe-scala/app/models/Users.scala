@@ -1,6 +1,6 @@
 package models
 
-object Users {
+class Users {
 
   val knownUsers = Map("Alice" -> "aaaa", "Bob" -> "aaaa", "Carol" -> "aaaa")
 

@@ -7,8 +7,6 @@ class ShopSpec extends Specification {
 
   "A Shop" should {
 
-    val shop = Shop
-
     "add an item" in new WithShopApplication {
       shop.create("Play Framework Essentials", 42) must beSome[Item].which { item =>
         item.name == "Play Framework Essentials" && item.price == 42

@@ -1,14 +1,15 @@
-import models.Shop
+import play.api.Application
 import play.api.mvc.WithFilters
-import play.api.{Application, GlobalSettings}
 import play.filters.csrf.CSRFFilter
+import shop.GuiceInjector
 
-object Global extends WithFilters(CSRFFilter()) {
+object Global extends WithFilters(CSRFFilter()) with GuiceInjector {
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)
-    if (Shop.list().isEmpty) {
-      Shop.create("Play Framework Essentials", 42)
+    val service = injector.getInstance(classOf[controllers.Service])
+    if (service.shop.list().isEmpty) {
+      service.shop.create("Play Framework Essentials", 42)
     }
   }
 

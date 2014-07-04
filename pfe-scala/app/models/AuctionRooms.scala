@@ -1,12 +1,13 @@
 package models
 
 import akka.actor.{Props, Actor}
+import play.api.Application
 import play.api.libs.iteratee.{Enumerator, Concurrent}
 import play.api.libs.concurrent.Akka
 import scala.concurrent.Future
 
-class AuctionRooms extends Actor {
-  import AuctionRooms._
+class AuctionRoomsActor extends Actor {
+  import AuctionRoomsActor._
 
   class Room {
     var bids = Map.empty[String, Double]
@@ -40,14 +41,20 @@ class AuctionRooms extends Actor {
 
 }
 
-object AuctionRooms {
+object AuctionRoomsActor {
+  case class Notifications(id: Long)
+  case class ItemBid(id: Long, name: String, price: Double)
+}
 
-  import play.api.Play.current
+class AuctionRooms(app: Application) {
+
   import akka.pattern.ask
-  import scala.concurrent.duration.DurationInt
+  import concurrent.duration.DurationInt
+  import AuctionRoomsActor._
+
   implicit val timeout: akka.util.Timeout = 1.second
 
-  private lazy val ref = Akka.system.actorOf(Props[AuctionRooms])
+  private lazy val ref = Akka.system(app).actorOf(Props[AuctionRoomsActor])
 
   /**
    * Ask for the notifications stream of an auction room
@@ -66,8 +73,5 @@ object AuctionRooms {
   def bid(id: Long, name: String, price: Double): Unit = {
     ref ! ItemBid(id, name, price)
   }
-
-  case class Notifications(id: Long)
-  case class ItemBid(id: Long, name: String, price: Double)
 
 }

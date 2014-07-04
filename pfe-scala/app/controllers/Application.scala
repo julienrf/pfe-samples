@@ -1,13 +1,14 @@
 package controllers
 
-import play.api.mvc.{Controller, Action}
+import javax.inject.{Inject, Singleton}
+
+import play.api.mvc.Action
 import play.api.Routes
 import play.twirl.api.JavaScript
 import play.api.cache.Cached
-import play.api.Play.current
 import play.api.i18n.Lang
 
-object Application extends Controller {
+@Singleton class Application @Inject() (service: Service) extends Controller(service) {
 
   val index = Cached(implicit request => s"main-html-${implicitly[Lang].code}") {
     Action { implicit request =>

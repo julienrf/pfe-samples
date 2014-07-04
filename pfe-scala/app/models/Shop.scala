@@ -2,25 +2,10 @@ package models
 
 case class Item(id: Long, name: String, price: Double)
 
-trait Shop {
+class Shop(schema: db.Schema) {
 
-  def list(): Iterable[Item]
-
-  def create(name: String, price: Double): Option[Item]
-
-  def get(id: Long): Option[Item]
-
-  def update(id: Long, name: String, price: Double): Option[Product]
-
-  def delete(id: Long): Boolean
-
-}
-
-object Shop extends Shop {
-
-  import db.Schema.{ds, items}
-  import db.Schema.queryLanguage._
-  import play.api.Play.current
+  import schema.{ds, items}
+  import schema.queryLanguage._
 
   def list(): Iterable[Item] = ds withSession { implicit session =>
     items.list()

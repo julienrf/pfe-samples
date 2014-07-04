@@ -9,6 +9,7 @@ libraryDependencies ++= Seq(
   ws,
   "com.typesafe.slick" %% "slick" % "2.0.1",
   "org.webjars" % "requirejs" % "2.1.11-1",
+  "com.google.inject" % "guice" % "3.0",
   "org.mockito" % "mockito-core" % "1.9.5" % "test"
 )
 

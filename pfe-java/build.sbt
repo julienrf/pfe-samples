@@ -8,7 +8,8 @@ libraryDependencies ++= Seq(
   javaWs,
   javaJpa.exclude("org.hibernate.javax.persistence", "hibernate-jpa-2.0-api"),
   "org.hibernate" % "hibernate-entitymanager" % "4.3.4.Final",
-  "org.webjars" % "requirejs" % "2.1.11-1"
+  "org.webjars" % "requirejs" % "2.1.11-1",
+  "com.google.inject" % "guice" % "3.0"
 )
 
 resolvers += "Typesafe Maven Repository" at "http://repo.typesafe.com/typesafe/maven-releases/"

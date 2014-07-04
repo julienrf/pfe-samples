@@ -1,12 +1,9 @@
 package models
 
-import play.api.libs.ws.{WSResponse, WS}
-
+import play.api.libs.ws.{WSClient, WSResponse}
 import scala.concurrent.Future
 
-object SocialNetwork {
-
-  val ws = WS.client(play.api.Play.current)
+class SocialNetwork(ws: WSClient) {
 
   val sharingEndpoint = "http://www.mocky.io/v2/539c5a907650aa6202515c00"
 

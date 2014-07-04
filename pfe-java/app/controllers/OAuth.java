@@ -3,15 +3,16 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import play.libs.F;
 import play.libs.Scala;
-import play.libs.ws.WS;
-import play.libs.ws.WSClient;
 import play.mvc.Call;
-import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import static controllers.URL.param;
 
+@Singleton
 public class OAuth extends Controller {
 
     public static final String TOKEN_KEY = "oauth-token";
@@ -22,7 +23,10 @@ public class OAuth extends Controller {
     static final String CLIENT_SECRET = "9-PoA1ZwynHJlE4Y3VY8fONX";
     static final String SCOPE = "plus.moments.insert https://www.googleapis.com/auth/plus.login";
 
-    static final WSClient ws = WS.client();
+    @Inject
+    public OAuth(Service service) {
+        super(service);
+    }
 
     public static String authorizeUrl(Call returnTo) {
         return URL.build(AUTHORIZATION_ENDPOINT, Scala.varargs(
@@ -34,12 +38,12 @@ public class OAuth extends Controller {
         ));
     }
 
-    public static F.Promise<Result> callback() {
+    public F.Promise<Result> callback() {
         String code = request().getQueryString("code");
         if (code != null) {
             String state = request().getQueryString("state");
             String returnTo = state != null ? state : routes.Items.list().url();
-            return ws.url(TOKEN_ENDPOINT)
+            return service.ws.url(TOKEN_ENDPOINT)
                     .setContentType(Http.MimeTypes.FORM)
                     .post(URL.encode(Scala.varargs(
                             param("code", code),

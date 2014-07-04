@@ -1,8 +1,10 @@
 package db
 
 import models.Item
+import play.api.Application
 
-object Schema {
+class Schema(app: Application) {
+
   val queryLanguage = scala.slick.driver.H2Driver.simple
   import queryLanguage._
   import scala.slick.lifted.{Tag, TableQuery}
@@ -23,6 +25,6 @@ object Schema {
     }
   }
 
-  def ds(implicit app: play.api.Application) =
-    Database.forDataSource(play.api.db.DB.getDataSource())
+  val ds = Database.forDataSource(play.api.db.DB.getDataSource()(app))
+
 }
