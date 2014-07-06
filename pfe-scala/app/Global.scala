@@ -7,7 +7,7 @@ object Global extends WithFilters(CSRFFilter()) with GuiceInjector {
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)
-    val service = injector.getInstance(classOf[controllers.Service])
+    val service = getControllerInstance(classOf[controllers.Service])
     if (service.shop.list().isEmpty) {
       service.shop.create("Play Framework Essentials", 42)
     }

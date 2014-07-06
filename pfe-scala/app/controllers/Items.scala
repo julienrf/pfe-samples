@@ -19,7 +19,7 @@ object CreateItem {
   )(CreateItem.apply)(CreateItem.unapply))
 }
 
-@Singleton class Items @Inject() (service: Service) extends Controller(service) with WithDBAction {
+@Singleton class Items @Inject() (service: Service, DBAction: DBAction) extends Controller(service) {
 
   import Items._
 
