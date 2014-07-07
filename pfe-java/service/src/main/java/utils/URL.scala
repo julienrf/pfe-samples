@@ -1,4 +1,4 @@
-package controllers
+package utils
 
 // Convenient URL builder
 object URL {

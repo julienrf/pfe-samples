@@ -6,11 +6,12 @@ import play.libs.Scala;
 import play.mvc.Call;
 import play.mvc.Http;
 import play.mvc.Result;
+import utils.URL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static controllers.URL.param;
+import static utils.URL.param;
 
 @Singleton
 public class OAuth extends Controller {

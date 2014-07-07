@@ -1,3 +1,5 @@
 This project contains both the Java and Scala application written for the Play Framework Essentials book.
 
-This is an sbt project, just install sbt (see http://www.scala-sbt.org for instructions) and use it to manage the project.
+The `pfe-java` directory contains the Java version, the `pfe-scala` directory contains the Scala version.
+
+Both are sbt projects, just install sbt (see http://www.scala-sbt.org for instructions) and use it to manage the project.

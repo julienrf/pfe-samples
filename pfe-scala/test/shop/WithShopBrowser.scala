@@ -1,8 +1,7 @@
 package shop
 
-import controllers.Service
 import play.api.mvc.WithFilters
-import play.api.test.{WithApplication, WithBrowser, Helpers, FakeApplication}
+import play.api.test.{Helpers, FakeApplication, WithApplication, WithBrowser}
 import play.filters.csrf.CSRFFilter
 
 object `package` {
@@ -14,8 +13,6 @@ object `package` {
 
 }
 
-class WithShopApplication extends WithApplication(fakeShopApplication()) {
-  lazy val shop = app.global.getControllerInstance(classOf[Service]).shop
-}
+class WithShopApplication extends WithApplication(app = fakeShopApplication())
 
 class WithShopBrowser extends WithBrowser(app = fakeShopApplication())

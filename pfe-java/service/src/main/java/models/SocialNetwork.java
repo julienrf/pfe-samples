@@ -1,6 +1,6 @@
 package models;
 
-import controllers.URL;
+import utils.URL;
 import play.libs.F;
 import play.libs.Scala;
 import play.libs.ws.WSClient;

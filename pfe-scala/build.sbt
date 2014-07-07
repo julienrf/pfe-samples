@@ -1,13 +1,13 @@
+lazy val `pfe-scala` = project.in(file(".")).enablePlugins(PlayScala).dependsOn(service)
+
 name := "pfe-scala"
 
 version := "1.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
-  jdbc,
   filters,
   cache,
   ws,
-  "com.typesafe.slick" %% "slick" % "2.0.1",
   "org.webjars" % "requirejs" % "2.1.11-1",
   "com.google.inject" % "guice" % "3.0",
   "org.mockito" % "mockito-core" % "1.9.5" % "test"
@@ -27,4 +27,12 @@ RjsKeys.mainModule := "shop"
 
 RjsKeys.paths += "routes" -> ("routes", "empty:")
 
-lazy val `pfe-scala` = project.in(file(".")).enablePlugins(PlayScala)
+lazy val service = project.settings(
+  libraryDependencies ++= Seq(
+    "com.typesafe.slick" %% "slick" % "2.0.1",
+    jdbc,
+    ws,
+    "org.specs2" %% "specs2-core" % "2.3.12" % "test",
+    component("play-test") % "test"
+  )
+)
