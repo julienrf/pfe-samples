@@ -2,6 +2,8 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import controllers.oauth.OAuth
+import play.api.Logger
 import play.api.mvc.Action
 import play.api.libs.json._
 import models.Item
@@ -9,6 +11,8 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text, of}
 import play.api.data.format.Formats.doubleFormat
 import play.api.data.validation.Constraints
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 case class CreateItem(name: String, price: Double)
 
@@ -19,7 +23,7 @@ object CreateItem {
   )(CreateItem.apply)(CreateItem.unapply))
 }
 
-@Singleton class Items @Inject() (service: Service, DBAction: DBAction) extends Controller(service) {
+@Singleton class Items @Inject() (service: Service, DBAction: DBAction, oauth: OAuth) extends Controller(service) {
 
   import Items._
 
@@ -78,13 +82,12 @@ object CreateItem {
   }
 
   def share(id: Long) = Action { implicit request =>
-    request.session.get(OAuth.tokenKey) match {
-      case Some(token) =>
-        service.socialNetwork.share(routes.Items.details(id).absoluteURL(), token)
-        Ok
-      case None =>
-        Redirect(OAuth.authorizeUrl(routes.Items.details(id)))
-    }
+    oauth.authenticated( token => {
+      service.socialNetwork.share(routes.Items.details(id).absoluteURL(), token).foreach { response =>
+        Logger.info(s"Sharing request successfully sent for item #$id. Got response status ${response.statusText}")
+      }
+      Ok
+    }, Redirect(oauth.authorizeUrl(routes.Items.details(id))))
   }
 
 }

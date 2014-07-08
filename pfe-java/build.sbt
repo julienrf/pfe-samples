@@ -1,4 +1,4 @@
-lazy val `pfe-java` = project.in(file(".")).enablePlugins(PlayJava).dependsOn(service)
+lazy val `pfe-java` = project.in(file(".")).enablePlugins(PlayJava).dependsOn(service, oauth)
 
 name := "pfe-java"
 
@@ -7,7 +7,6 @@ version := "1.0-SNAPSHOT"
 libraryDependencies ++= Seq(
   filters,
   cache,
-  javaWs,
   "org.webjars" % "requirejs" % "2.1.11-1",
   "com.google.inject" % "guice" % "3.0"
 )
@@ -31,4 +30,13 @@ lazy val service = project.settings(
     "org.hibernate" % "hibernate-entitymanager" % "4.3.4.Final",
     component("play-test") % "test"
   )
-)
+).dependsOn(url)
+
+lazy val oauth = project.enablePlugins(PlayJava).settings(
+  libraryDependencies ++= Seq(
+    javaWs,
+    "com.google.inject" % "guice" % "3.0"
+  )
+).dependsOn(url)
+
+lazy val url = project

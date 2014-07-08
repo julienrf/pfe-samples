@@ -26,7 +26,7 @@ public class ItemsTest {
 
     @Test
     public void createItem() {
-        withApplication((service) -> {
+        withApplication(() -> {
             Result response = route(jsonRequest(routes.Items.create(), itemCreate));
             assertThat(status(response)).isEqualTo(OK);
             Item item = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
@@ -38,7 +38,7 @@ public class ItemsTest {
 
     @Test
     public void listItems() {
-        withApplication((service) -> {
+        withApplication(() -> {
             Result response = route(jsonRequest(routes.Items.list()));
             assertThat(status(response)).isEqualTo(OK);
             assertThat(contentAsString(response)).isEqualTo("[]");
@@ -47,7 +47,7 @@ public class ItemsTest {
 
     @Test
     public void getItem() {
-        withApplication((service) -> {
+        withApplication(() -> {
             Result response = route(jsonRequest(routes.Items.create(), itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
             Result response2 = route(jsonRequest(routes.Items.details(createdItem.id)));
@@ -60,7 +60,7 @@ public class ItemsTest {
 
     @Test
     public void updateItem() {
-        withApplication((service) -> {
+        withApplication(() -> {
             Result response = route(jsonRequest(routes.Items.create(), itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
             Items.CreateItem update = new Items.CreateItem();
@@ -76,7 +76,7 @@ public class ItemsTest {
 
     @Test
     public void deleteItem() {
-        withApplication((service) -> {
+        withApplication(() -> {
             Result response = route(jsonRequest(routes.Items.create(), itemCreate));
             Item createdItem = Json.fromJson(Json.parse(contentAsString(response)), Item.class);
             Result response2 = route(jsonRequest(routes.Items.delete(createdItem.id)));

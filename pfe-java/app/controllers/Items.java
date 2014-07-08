@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.oauth.OAuth;
 import models.Item;
 import play.data.Form;
 import play.data.validation.Constraints;
@@ -9,6 +10,8 @@ import play.mvc.Result;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.util.function.Function;
+
 import static controllers.DBAction.DB;
 import static controllers.Render.render;
 import static controllers.Render.version;
@@ -17,9 +20,12 @@ import static play.mvc.Http.MimeTypes;
 @Singleton
 public class Items extends Controller {
 
+    final OAuth oauth;
+
     @Inject
-    public Items(Service service) {
+    public Items(Service service, OAuth oauth) {
         super(service);
+        this.oauth = oauth;
     }
 
     public static class CreateItem {
@@ -103,13 +109,10 @@ public class Items extends Controller {
     }
 
     public Result share(Long id) {
-        String token = session().get(OAuth.TOKEN_KEY);
-        if (token != null) {
+        return oauth.authenticated(token -> {
             service.socialNetwork.share(routes.Items.details(id).absoluteURL(request()), token);
             return ok();
-        } else {
-            return redirect(OAuth.authorizeUrl(routes.Items.details(id)));
-        }
+        }, (() -> redirect(oauth.authorizeUrl(routes.Items.details(id)))));
     }
 
 }

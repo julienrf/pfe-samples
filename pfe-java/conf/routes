@@ -9,7 +9,7 @@ GET           /login                                  @controllers.Authenticatio
 POST          /authenticate                           @controllers.Authentication.authenticate(returnTo)
 GET           /logout                                 @controllers.Authentication.logout
 
-GET           /oauth/callback                         @controllers.OAuth.callback()
+->            /oauth                                  oauth.Routes
 
 GET           /items                                  @controllers.Items.list()
 POST          /items                                  @controllers.Items.create()

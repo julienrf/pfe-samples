@@ -1,4 +1,4 @@
-package utils
+package url
 
 // Convenient URL builder
 object URL {

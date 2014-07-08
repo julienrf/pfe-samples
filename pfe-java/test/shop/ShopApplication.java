@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
-import controllers.Service;
 import play.Application;
 import play.GlobalSettings;
 import play.api.mvc.EssentialFilter;
@@ -12,8 +11,6 @@ import play.filters.csrf.CSRFFilter;
 import play.libs.F;
 import play.test.FakeApplication;
 import play.test.TestBrowser;
-
-import java.util.function.Consumer;
 
 import static play.test.Helpers.*;
 
@@ -46,9 +43,8 @@ public class ShopApplication {
         });
     }
 
-    public static void withApplication(Consumer<Service> consumer) {
-        FakeApplication app = shopApplication();
-        running(app, () -> consumer.accept(app.getWrappedApplication().global().getControllerInstance(Service.class)));
+    public static void withApplication(Runnable runnable) {
+        running(shopApplication(), runnable::run);
     }
 
     public static void withBrowser(F.Callback<TestBrowser> callback) {
