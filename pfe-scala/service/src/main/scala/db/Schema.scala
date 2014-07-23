@@ -25,6 +25,6 @@ class Schema(app: Application) {
     }
   }
 
-  val ds = Database.forDataSource(play.api.db.DB.getDataSource()(app))
+  val db = Database.forDataSource(play.api.db.DB.getDataSource()(app))
 
 }
