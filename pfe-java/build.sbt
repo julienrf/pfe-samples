@@ -11,8 +11,6 @@ libraryDependencies ++= Seq(
   "com.google.inject" % "guice" % "3.0"
 )
 
-resolvers += "Typesafe Maven Repository" at "http://repo.typesafe.com/typesafe/maven-releases/"
-
 includeFilter in (Assets, LessKeys.less) := "shop.less"
 
 pipelineStages := Seq(rjs, gzip, digest)
@@ -29,7 +27,8 @@ lazy val service = project.settings(
     javaJpa.exclude("org.hibernate.javax.persistence", "hibernate-jpa-2.0-api"),
     "org.hibernate" % "hibernate-entitymanager" % "4.3.4.Final",
     component("play-test") % "test"
-  )
+  ),
+  resolvers += "Typesafe" at "http://repo.typesafe.com/typesafe/releases/"
 ).dependsOn(url)
 
 lazy val oauth = project.enablePlugins(PlayJava).settings(

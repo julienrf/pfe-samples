@@ -43,12 +43,4 @@ public class ShopApplication {
         });
     }
 
-    public static void withApplication(Runnable runnable) {
-        running(shopApplication(), runnable::run);
-    }
-
-    public static void withBrowser(F.Callback<TestBrowser> callback) {
-        running(testServer(play.api.test.Helpers.testServerPort(), shopApplication()), HTMLUNIT, callback);
-    }
-
 }
