@@ -12,8 +12,6 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "1.9.5" % "test"
 )
 
-resolvers += "Typesafe Maven Repository" at "http://repo.typesafe.com/typesafe/maven-releases/"
-
 scalacOptions += "-feature"
 
 includeFilter in (Assets, LessKeys.less) := "shop.less"
@@ -33,7 +31,8 @@ lazy val service = project.settings(
     ws,
     "org.specs2" %% "specs2-core" % "2.3.12" % "test",
     component("play-test") % "test"
-  )
+  ),
+  resolvers += "Typesafe" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
 lazy val oauth = project.enablePlugins(PlayScala).settings(
