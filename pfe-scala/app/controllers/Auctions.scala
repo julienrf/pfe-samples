@@ -26,10 +26,8 @@ import scala.concurrent.Future
     }
   }
 
-  def bid(id: Long) = AuthenticatedAction(parse.json) { implicit request =>
-      for (bid <- request.body.validate(bidValidator)) {
-        service.auctionRooms.bid(id, request.username, bid)
-      }
+  def bid(id: Long) = AuthenticatedAction(parse.json(bidValidator)) { implicit request =>
+      service.auctionRooms.bid(id, request.username, request.body)
       Ok
   }
 
