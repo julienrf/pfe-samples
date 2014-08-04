@@ -1,5 +1,6 @@
 @(items: java.util.Collection[models.Item])
 @layout {
+    <script data-main="@routes.Assets.versioned("javascripts/shop.js")" src="@routes.Assets.versioned("lib/requirejs/require.js")" defer></script>
     <h2>Items list</h2>
     <ul>
     @for(item <- items) {
@@ -10,5 +11,4 @@
     }
     </ul>
     <a href="@routes.Items.createForm()">Add a new item</a>
-    <script data-main="@routes.Assets.versioned("javascripts/shop.js")" src="@routes.Assets.versioned("lib/requirejs/require.js")"></script>
 }
