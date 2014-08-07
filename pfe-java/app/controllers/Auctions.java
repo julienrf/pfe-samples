@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import static controllers.AuthenticatedAction.Authenticated;
+import static controllers.DBAction.DB;
 import static play.libs.EventSource.Event.event;
 
 @Singleton
@@ -29,6 +30,7 @@ public class Auctions extends Controller {
     }
 
     @Authenticated
+    @DB
     public Result room(Long id) {
         Item item = service.shop.get(id);
         if (item != null) {
@@ -57,6 +59,7 @@ public class Auctions extends Controller {
     }
 
     @Authenticated
+    @DB
     public Result roomWs(Long id) {
         Item item = service.shop.get(id);
         if (item != null) {

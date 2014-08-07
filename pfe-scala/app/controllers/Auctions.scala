@@ -10,7 +10,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.{Iteratee, Enumerator}
 import scala.concurrent.Future
 
-@Singleton class Auctions @Inject() (service: Service) extends Controller(service) {
+@Singleton class Auctions @Inject() (service: Service, DBAction: DBAction) extends Controller(service) {
 
   type Bid = (String, Double)
   implicit val writesNotification = Writes[Bid] {
@@ -19,7 +19,7 @@ import scala.concurrent.Future
 
   val bidValidator = (__ \ "price").read[Double]
 
-  def room(id: Long) = AuthenticatedAction { implicit request =>
+  def room(id: Long) = (DBAction andThen AuthenticatedAction) { implicit request =>
     service.shop.get(id) match {
       case Some(item) => Ok(views.html.auctionRoom(item))
       case None => NotFound
@@ -38,7 +38,7 @@ import scala.concurrent.Future
     }
   }
 
-  def roomWs(id: Long) = AuthenticatedAction { implicit request =>
+  def roomWs(id: Long) = (DBAction andThen AuthenticatedAction) { implicit request =>
     service.shop.get(id) match {
       case Some(item) => Ok(views.html.auctionRoomWs(item))
       case None => NotFound

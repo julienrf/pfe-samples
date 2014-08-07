@@ -39,9 +39,10 @@ require(['routes'], (routes) ->
       if price > @item.price
         @ws.send(JSON.stringify({ price: +price }))
       else
-        alert('Please enter your name and bid!')
+        alert('Please make a higher offer than ' + @item.price + '€')
     addBid: (name, price) ->
       @bids[name] = price
+      @item.price = price
       @ui.updateBids(@bids)
 
   el = document.getElementById('auction-room')
