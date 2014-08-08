@@ -1,11 +1,9 @@
 import play.api.Application
 import play.api.mvc.WithFilters
 import play.filters.csrf.CSRFFilter
-import shop.GuiceInjector
+import shop.ShopInjector
 
-import scala.concurrent.ExecutionContext
-
-object Global extends WithFilters(CSRFFilter()) with GuiceInjector {
+object Global extends WithFilters(CSRFFilter()) with ShopInjector {
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)

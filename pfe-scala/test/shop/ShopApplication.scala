@@ -7,7 +7,7 @@ import play.filters.csrf.CSRFFilter
 object `package` {
 
   def fakeShopApplication() = FakeApplication(
-    withGlobal = Some(new WithFilters(CSRFFilter()) with GuiceInjector),
+    withGlobal = Some(new WithFilters(CSRFFilter()) with ShopInjector),
     additionalConfiguration = Helpers.inMemoryDatabase()
   )
 

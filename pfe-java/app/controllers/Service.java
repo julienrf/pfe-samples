@@ -21,4 +21,8 @@ public class Service {
 
     public final SocialNetwork socialNetwork = new SocialNetwork(ws);
 
+    // HACK because fields cannot be mocked
+    public Shop shop() {
+        return shop;
+    }
 }

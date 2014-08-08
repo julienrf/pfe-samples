@@ -8,19 +8,14 @@ import play.Application;
 import play.GlobalSettings;
 import play.api.mvc.EssentialFilter;
 import play.filters.csrf.CSRFFilter;
+import play.inject.PlayApplicationModule;
 import play.libs.ws.WSClient;
 
 public class Global extends GlobalSettings {
 
-    final Injector injector = Guice.createInjector(new AbstractModule() {
+    final Injector injector = Guice.createInjector(new PlayApplicationModule(), new AbstractModule() {
         @Override
         protected void configure() {
-            bind(Application.class).toProvider(new Provider<Application>() {
-                @Override
-                public Application get() {
-                    return play.Play.application();
-                }
-            });
             bind(OAuth.Configuration.class).toProvider(new Provider<OAuth.Configuration>() {
                 @Override
                 public OAuth.Configuration get() {

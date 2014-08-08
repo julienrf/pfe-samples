@@ -32,7 +32,7 @@ public class Auctions extends Controller {
     @Authenticated
     @DB
     public Result room(Long id) {
-        Item item = service.shop.get(id);
+        Item item = service.shop().get(id);
         if (item != null) {
             return ok(views.html.auctionRoom.render(item));
         } else return notFound();
