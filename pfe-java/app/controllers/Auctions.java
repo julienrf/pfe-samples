@@ -68,7 +68,7 @@ public class Auctions extends Controller {
     }
 
     public WebSocket<JsonNode> channel(Long id) throws Throwable {
-        return Authentication.authenticated(ctx(), username -> WebSocket.<JsonNode>whenReady((in, out) -> {
+        return Authentication.<WebSocket<JsonNode> >authenticated(ctx(), username -> WebSocket.<JsonNode>whenReady((in, out) -> {
             in.onMessage(json -> {
                 CreateBid bid = Json.fromJson(json, CreateBid.class);
                 service.auctionRooms.bid(id, username, bid.price);
