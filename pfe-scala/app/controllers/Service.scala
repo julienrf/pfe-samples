@@ -1,14 +1,12 @@
 package controllers
 
-import javax.inject.{Singleton, Inject}
+import javax.inject.{Inject, Singleton}
 
-import models.{SocialNetwork, Users, AuctionRooms, Shop}
 import db.Schema
-import play.api.libs.ws.WS
+import models.{AuctionRooms, Shop, SocialNetwork, Users}
+import play.api.libs.ws.WSClient
 
 @Singleton class Service @Inject() (val app: play.api.Application) {
-
-  val ws = WS.client(app)
 
   val shop = new Shop(new Schema(app))
 
@@ -16,6 +14,6 @@ import play.api.libs.ws.WS
 
   val users = new Users
 
-  val socialNetwork = new SocialNetwork(ws)
+  val socialNetwork = new SocialNetwork(app.injector.instanceOf[WSClient])
 
 }

@@ -4,6 +4,8 @@ name := "pfe-scala"
 
 version := "1.0-SNAPSHOT"
 
+scalaVersion := "2.11.4"
+
 libraryDependencies ++= Seq(
   filters,
   cache,
@@ -24,9 +26,13 @@ RjsKeys.mainModule := "shop"
 
 RjsKeys.paths += "routes" -> ("routes", "empty:")
 
+resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
+
 lazy val service = project.settings(
+  scalaVersion := "2.11.4",
+  resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
-    "com.typesafe.slick" %% "slick" % "2.0.1",
+    "com.typesafe.slick" %% "slick" % "2.1.0",
     jdbc,
     ws,
     "org.specs2" %% "specs2-core" % "2.3.12" % "test",
@@ -36,6 +42,8 @@ lazy val service = project.settings(
 )
 
 lazy val oauth = project.enablePlugins(PlayScala).settings(
+  scalaVersion := "2.11.4",
+  resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
     ws,
     "com.google.inject" % "guice" % "3.0"

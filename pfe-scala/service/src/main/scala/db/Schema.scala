@@ -18,7 +18,7 @@ class Schema(app: Application) {
   val items = TableQuery[Items]
 
   object Items {
-    implicit class ItemsExtensions[A](val q: Query[Items, A]) {
+    implicit class ItemsExtensions[A](val q: Query[Items, A, Seq]) {
       val byId = Compiled { (id: Column[Long]) =>
         q.filter(_.id === id)
       }
