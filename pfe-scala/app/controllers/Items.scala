@@ -1,12 +1,10 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
 import controllers.oauth.OAuth
 import play.api.Logger
-import play.api.mvc.Action
+import play.api.mvc.{Controller, Action}
 import play.api.libs.json._
-import models.Item
+import models.{SocialNetwork, Shop, Item}
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text, of}
 import play.api.data.format.Formats.doubleFormat
@@ -23,12 +21,12 @@ object CreateItem {
   )(CreateItem.apply)(CreateItem.unapply))
 }
 
-@Singleton class Items @Inject() (service: Service, DBAction: DBAction, oauth: OAuth) extends Controller(service) {
+class Items(shop: Shop, socialNetwork: SocialNetwork, DBAction: DBAction, oauth: OAuth) extends Controller {
 
   import Items._
 
   val list = DBAction { implicit request =>
-    val items = service.shop.list()
+    val items = shop.list()
     render {
       case Accepts.Html() => Ok(views.html.list(items))
       case Accepts.Json() => Ok(Json.toJson(items))
@@ -42,7 +40,7 @@ object CreateItem {
         case Accepts.Json() => BadRequest(formWithErrors.errorsAsJson)
       },
       createItem => {
-        service.shop.create(createItem.name, createItem.price) match {
+        shop.create(createItem.name, createItem.price) match {
           case Some(item) => render {
             case Accepts.Html() => Redirect(routes.Items.details(item.id))
             case Accepts.Json() => Ok(Json.toJson(item))
@@ -58,7 +56,7 @@ object CreateItem {
   }
 
   def details(id: Long) = DBAction { implicit request =>
-    service.shop.get(id) match {
+    shop.get(id) match {
       case Some(item) => render {
         case Accepts.Html() => Ok(views.html.details(item))
         case Accepts.Json() => Ok(Json.toJson(item))
@@ -70,7 +68,7 @@ object CreateItem {
   def update(id: Long) = DBAction { implicit request =>
     CreateItem.form.bindFromRequest().fold(
       formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-      updateItem => service.shop.update(id, updateItem.name, updateItem.price) match {
+      updateItem => shop.update(id, updateItem.name, updateItem.price) match {
         case Some(item) => Ok(Json.toJson(item))
         case None => InternalServerError
       }
@@ -78,12 +76,12 @@ object CreateItem {
   }
 
   def delete(id: Long) = DBAction {
-    if (service.shop.delete(id)) Ok else BadRequest
+    if (shop.delete(id)) Ok else BadRequest
   }
 
   def share(id: Long) = Action { implicit request =>
     oauth.authenticated( token => {
-      service.socialNetwork.share(routes.Items.details(id).absoluteURL(), token).foreach { response =>
+      socialNetwork.share(routes.Items.details(id).absoluteURL(), token).foreach { response =>
         Logger.info(s"Sharing request successfully sent for item #$id. Got response status ${response.statusText}")
       }
       Ok

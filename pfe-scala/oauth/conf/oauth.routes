@@ -1,1 +1,1 @@
-GET        /callback        @controllers.oauth.OAuth.callback
+GET        /callback        controllers.oauth.OAuth.callback

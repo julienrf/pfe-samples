@@ -1,16 +1,18 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
-import play.api.mvc.Action
+import play.api.mvc.{RequestHeader, Controller, Action}
 import play.api.Routes
 import play.twirl.api.JavaScript
 import play.api.cache.Cached
-import play.api.i18n.Lang
+import play.api.i18n.{MessagesApi, Messages, Lang}
 
-@Singleton class Application @Inject() (service: Service) extends Controller(service) {
+import scala.language.implicitConversions
 
-  val index = Cached(implicit request => s"main-html-${implicitly[Lang].code}") {
+class Application(cached: Cached, messagesApi: MessagesApi) extends Controller {
+
+  implicit def request2Messages(implicit requestHeader: RequestHeader): Messages = messagesApi.preferred(requestHeader)
+
+  val index = cached(implicit request => s"main-html-${request2Messages.lang.code}") {
     Action { implicit request =>
       Ok(views.html.main())
     }

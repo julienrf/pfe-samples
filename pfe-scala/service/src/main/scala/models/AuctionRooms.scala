@@ -1,6 +1,6 @@
 package models
 
-import akka.actor.{Props, Actor}
+import akka.actor.{ActorSystem, Props, Actor}
 import play.api.Application
 import play.api.libs.iteratee.{Enumerator, Concurrent}
 import play.api.libs.concurrent.Akka
@@ -46,7 +46,7 @@ object AuctionRoomsActor {
   case class ItemBid(id: Long, name: String, price: Double)
 }
 
-class AuctionRooms(app: Application) {
+class AuctionRooms(system: ActorSystem) {
 
   import akka.pattern.ask
   import concurrent.duration.DurationInt
@@ -54,7 +54,7 @@ class AuctionRooms(app: Application) {
 
   implicit val timeout: akka.util.Timeout = 1.second
 
-  private lazy val ref = Akka.system(app).actorOf(Props[AuctionRoomsActor])
+  private lazy val ref = system.actorOf(Props[AuctionRoomsActor])
 
   /**
    * Ask for the notifications stream of an auction room

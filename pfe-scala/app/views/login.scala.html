@@ -8,8 +8,10 @@
                 <li>@error.message</li>
             }
         </ul>
-        @helper.inputText(form("username"), '_label -> "Name")
-        @helper.inputPassword(form("password"), '_label -> "Password")
+@*        @helper.inputText(form("username"), '_label -> "Name") *@
+@*        @helper.inputPassword(form("password"), '_label -> "Password") *@
+        <input type="text" name="username" placeholder="Name" />
+        <input type="password" name="password" placeholder="Password" />
         <button>Sign in</button>
     }
 }

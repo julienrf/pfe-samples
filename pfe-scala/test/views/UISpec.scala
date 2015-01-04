@@ -1,7 +1,7 @@
 package views
 
 import play.api.test.PlaySpecification
-import shop.WithShopBrowser
+import loaders.WithShopBrowser
 
 class UISpec extends PlaySpecification {
 

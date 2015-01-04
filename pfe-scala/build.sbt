@@ -14,6 +14,8 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "1.9.5" % "test"
 )
 
+routesGenerator := InjectedRoutesGenerator
+
 scalacOptions += "-feature"
 
 includeFilter in (Assets, LessKeys.less) := "shop.less"
@@ -44,6 +46,7 @@ lazy val service = project.settings(
 lazy val oauth = project.enablePlugins(PlayScala).settings(
   scalaVersion := "2.11.4",
   resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
+  routesGenerator := InjectedRoutesGenerator,
   libraryDependencies ++= Seq(
     ws,
     "com.google.inject" % "guice" % "3.0"

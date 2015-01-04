@@ -1,18 +1,15 @@
 package controllers.oauth
 
-import javax.inject.{Inject, Singleton}
-
 import play.api.libs.ws.WSClient
 import play.api.mvc.{Action, Call, Controller, RequestHeader}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton class OAuth @Inject() (ws: WSClient, val configuration: OAuth.Configuration)(implicit ec: ExecutionContext) extends Controller {
+class OAuth(ws: WSClient, val configuration: OAuth.Configuration)(implicit ec: ExecutionContext) extends Controller {
 
   val callback = Action.async { implicit request =>
     request.getQueryString("code") match {
       case Some(code) =>
-//        val returnTo = request.getQueryString("state") getOrElse routes.Items.list().url
         val returnTo = request.getQueryString("state") getOrElse configuration.defaultReturnUrl
         for {
           response <- ws.url(configuration.tokenEndpoint).post(Map(
@@ -52,7 +49,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object OAuth {
 
-  case class Configuration @Inject() (
+  case class Configuration(
     authorizationEndpoint: String,
     tokenEndpoint: String,
     clientId: String,

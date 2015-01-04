@@ -2,8 +2,10 @@
 @layout {
     <h2>Add an item</h2>
     @helper.form(helper.CSRF(routes.Items.create())) {
-        @helper.inputText(form("name"), '_label -> "Name")
-        @helper.inputText(form("price"), '_label -> "Price")
+@*        @helper.inputText(form("name"), '_label -> "Name") *@
+@*        @helper.inputText(form("price"), '_label -> "Price") *@
+        <input type="text" placeholder="Name" name="name" />
+        <input type="text" placeholder="Price" name="price" />
         <button>Save</button>
     }
 }
