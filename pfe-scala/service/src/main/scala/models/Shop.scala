@@ -1,5 +1,8 @@
 package models
 
+import scala.concurrent.Future
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
 case class Item(id: Long, name: String, price: Double)
 
 class Shop(schema: db.Schema) {
@@ -7,26 +10,26 @@ class Shop(schema: db.Schema) {
   import schema.{db, items}
   import schema.queryLanguage._
 
-  def list(): Iterable[Item] = db withSession { implicit session =>
-    items.list()
-  }
+  def list(): Future[Seq[Item]] = db.run(items.result)
 
-  def create(name: String, price: Double): Option[Item] = db withSession { implicit session =>
-    val id = items.returning(items.map(_.id)) += Item(0, name, price)
-    items.byId(id).firstOption()
-  }
+  def create(name: String, price: Double): Future[Item] =
+    db.run(
+      for {
+        insertedId <- items.returning(items.map(_.id)) += Item(0, name, price)
+        item <- items.byId(insertedId).result.head
+      } yield item
+    )
 
-  def get(id: Long): Option[Item] = db withSession { implicit session =>
-    items.byId(id).firstOption()
-  }
+  def get(id: Long): Future[Option[Item]] =
+    db.run(items.byId(id).result.headOption)
 
-  def update(id: Long, name: String, price: Double): Option[Item] = db withSession { implicit session =>
-    items.byId(id).update(Item(id, name, price))
-    items.byId(id).firstOption()
-  }
+  def update(id: Long, name: String, price: Double): Future[Option[Item]] =
+    db.run(
+      items.byId(id).update(Item(id, name, price)) >>
+      items.byId(id).result.headOption
+    )
 
-  def delete(id: Long): Boolean = db withSession { implicit session =>
-    items.byId(id).delete != 0
-  }
+  def delete(id: Long): Future[Boolean] =
+    db.run(items.byId(id).delete.map(_ != 0))
 
 }

@@ -1,4 +1,4 @@
-@(form: Form[CreateItem])(implicit header: RequestHeader)
+@(form: Form[CreateItem])(implicit header: RequestHeader, messages: Messages)
 @layout {
     <h2>Add an item</h2>
     @helper.form(helper.CSRF(routes.Items.create())) {

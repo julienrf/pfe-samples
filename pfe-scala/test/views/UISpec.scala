@@ -18,7 +18,7 @@ class UISpec extends PlaySpecification {
         "name" -> "Play Framework Essentials",
         "price" -> "42")
 
-      browser.$("body").getText must contain ("Play Framework Essentials: 42.00 €")
+      browser.$("body").getText must contain ("Play Framework Essentials: 42,00 €")
 
     }
   }

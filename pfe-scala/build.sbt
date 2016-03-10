@@ -7,12 +7,14 @@ version := "1.0-SNAPSHOT"
 libraryDependencies ++= Seq(
   filters,
   cache,
-  "org.webjars" % "requirejs" % "2.1.11-1",
-  "com.google.inject" % "guice" % "3.0",
-  "org.mockito" % "mockito-core" % "1.9.5" % "test"
+  "org.webjars" % "requirejs" % "2.1.22",
+  "org.mockito" % "mockito-core" % "1.10.19" % Test,
+  component("play-specs2") % Test
 )
 
-scalacOptions += "-feature"
+scalaVersion in ThisBuild := "2.11.8"
+
+scalacOptions in ThisBuild += "-feature"
 
 includeFilter in (Assets, LessKeys.less) := "shop.less"
 
@@ -26,18 +28,17 @@ RjsKeys.paths += "routes" -> ("routes", "empty:")
 
 lazy val service = project.settings(
   libraryDependencies ++= Seq(
-    "com.typesafe.slick" %% "slick" % "2.0.1",
+    "com.typesafe.slick" %% "slick" % "3.1.1",
     jdbc,
     ws,
-    "org.specs2" %% "specs2-core" % "2.3.12" % "test",
+    evolutions,
+    "org.specs2" %% "specs2-core" % "3.7" % "test",
     component("play-test") % "test"
-  ),
-  resolvers += "Typesafe" at "http://repo.typesafe.com/typesafe/releases/"
+  )
 )
 
 lazy val oauth = project.enablePlugins(PlayScala).settings(
   libraryDependencies ++= Seq(
-    ws,
-    "com.google.inject" % "guice" % "3.0"
+    ws
   )
 )

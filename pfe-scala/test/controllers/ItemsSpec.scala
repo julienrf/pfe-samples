@@ -74,8 +74,8 @@ class ItemsSpec extends PlaySpecification {
 
   }
 
-  def successfullyRoute[A : Writeable, B : AsResult](request: FakeRequest[A])(f: Future[Result] => B) =
-    route(request) must beSome(f)
+  def successfullyRoute[A : Writeable, B : AsResult](request: FakeRequest[A])(f: Future[Result] => B)(implicit app: play.api.Application) =
+    route(app, request) must beSome(f)
 
   def jsonRequest(call: Call, body: JsValue): FakeRequest[JsValue] =
     FakeRequest(call).withBody(body).withHeaders(ACCEPT -> MimeTypes.JSON)

@@ -1,15 +1,14 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
+import models.Users
 import play.api.mvc._
 import play.api.mvc.Results.Redirect
 import play.api.data.Form
 import play.api.data.Forms.{tuple, nonEmptyText}
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import scala.concurrent.Future
 
-@Singleton class Authentication @Inject() (service: Service) extends Controller(service) {
+class Authentication(users: Users, val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   import Authentication._
 
@@ -23,7 +22,7 @@ import scala.concurrent.Future
       errors => BadRequest(views.html.login(errors, returnTo)),
       {
         case (username, password) =>
-          if (service.users.authenticate(username, password)) {
+          if (users.authenticate(username, password)) {
             Redirect(returnTo).addingToSession(UserKey -> username)
           } else {
             BadRequest(views.html.login(submission.withGlobalError(Messages("auth.unknown", username)), returnTo))

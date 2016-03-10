@@ -1,13 +1,15 @@
 package db
 
+import javax.sql.DataSource
+
 import models.Item
-import play.api.Application
 
-class Schema(app: Application) {
+import scala.language.higherKinds
 
-  val queryLanguage = scala.slick.driver.H2Driver.simple
+class Schema(dataSource: DataSource) {
+
+  val queryLanguage = slick.driver.H2Driver.api
   import queryLanguage._
-  import scala.slick.lifted.{Tag, TableQuery}
 
   class Items(tag: Tag) extends Table[Item](tag, "ITEMS") {
     val id = column[Long]("ID", O.AutoInc)
@@ -18,13 +20,13 @@ class Schema(app: Application) {
   val items = TableQuery[Items]
 
   object Items {
-    implicit class ItemsExtensions[A](val q: Query[Items, A]) {
-      val byId = Compiled { (id: Column[Long]) =>
+    implicit class ItemsExtensions[A, F[_]](val q: Query[Items, A, F]) {
+      val byId = Compiled { (id: Rep[Long]) =>
         q.filter(_.id === id)
       }
     }
   }
 
-  val db = Database.forDataSource(play.api.db.DB.getDataSource()(app))
+  val db = Database.forDataSource(dataSource)
 
 }
