@@ -1,22 +1,27 @@
 package models
 
-import akka.actor.{ActorSystem, Props, Actor}
-import play.api.libs.iteratee.{Enumerator, Concurrent}
+import akka.actor.{Actor, ActorSystem, Props}
+import akka.stream.{ActorMaterializer, Materializer, OverflowStrategy}
+import akka.stream.scaladsl.{Sink, Source}
+
 import scala.concurrent.Future
 
-class AuctionRoomsActor extends Actor {
+class AuctionRoomsActor(implicit mat: Materializer) extends Actor {
   import AuctionRoomsActor._
 
   class Room {
     var bids = Map.empty[String, Double]
-    val (enumerator, channel) = Concurrent.broadcast[(String, Double)]
+    val (ref, notifications) =
+      Source.actorRef(1000, OverflowStrategy.dropNew)
+        .toMat(Sink.asPublisher[(String, Double)](fanout = true)) { case (ref, publisher) => (ref, Source.fromPublisher(publisher)) }
+        .run()
 
-    def stateAndNotifications() = (bids, enumerator)
+    def stateAndNotifications() = (bids, notifications)
 
     def addBid(name: String, price: Double): Unit = {
       if (bids.forall { case (_, p) => p < price}) {
         bids += name -> price
-        channel.push(name -> price)
+        ref ! (name -> price)
       }
     }
 
@@ -46,21 +51,22 @@ object AuctionRoomsActor {
 
 class AuctionRooms(actorSystem: ActorSystem) {
 
-  import akka.pattern.ask
-  import concurrent.duration.DurationInt
   import AuctionRoomsActor._
+  import akka.pattern.ask
+
+  import concurrent.duration.DurationInt
 
   implicit val timeout: akka.util.Timeout = 1.second
+  implicit val mat: Materializer = ActorMaterializer()(actorSystem)
 
-  private lazy val ref = actorSystem.actorOf(Props[AuctionRoomsActor])
+  private lazy val ref = actorSystem.actorOf(Props(new AuctionRoomsActor))
 
   /**
    * Ask for the notifications stream of an auction room
    * @param id Item id
    */
-  def notifications(id: Long): Future[(Map[String, Double], Enumerator[(String, Double)])] = {
-    (ref ? Notifications(id)).mapTo[(Map[String, Double], Enumerator[(String, Double)])]
-  }
+  def notifications(id: Long): Future[(Map[String, Double], Source[(String, Double), _])] =
+    (ref ? Notifications(id)).mapTo[(Map[String, Double], Source[(String, Double), _])]
 
   /**
    * Bid for an item
@@ -68,8 +74,7 @@ class AuctionRooms(actorSystem: ActorSystem) {
    * @param name User name
    * @param price Bid price
    */
-  def bid(id: Long, name: String, price: Double): Unit = {
+  def bid(id: Long, name: String, price: Double): Unit =
     ref ! ItemBid(id, name, price)
-  }
 
 }
