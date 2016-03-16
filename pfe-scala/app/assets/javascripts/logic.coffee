@@ -5,6 +5,7 @@ define(['ui', 'routes'], (Ui, routes) ->
       xhr = new XMLHttpRequest()
       route = routes.controllers.Items.delete(id)
       xhr.open(route.method, route.url)
+      xhr.setRequestHeader('Csrf-Token', 'nocheck')
       xhr.addEventListener('readystatechange', () ->
         if xhr.readyState == XMLHttpRequest.DONE
           if xhr.status == 200

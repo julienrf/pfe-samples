@@ -41,6 +41,7 @@ require(['routes'], (routes) ->
         route = routes.controllers.Auctions.bid(@item.id)
         xhr.open(route.method, route.url)
         xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.setRequestHeader('Csrf-Token', 'nocheck')
         xhr.send(JSON.stringify({ price: +price }))
       else
         alert('Please make a higher offer than ' + @item.price + '€')
