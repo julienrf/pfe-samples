@@ -1,3 +1,5 @@
+**Update**: you can find an updated version of the Scala sample for Play 2.5 on the [play-2.5.0 branch](https://github.com/julienrf/pfe-samples/tree/play-2.5.0).
+
 This project contains both the Java and Scala application written for the Play Framework Essentials book.
 
 The `pfe-java` directory contains the Java version, the `pfe-scala` directory contains the Scala version.
