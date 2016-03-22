@@ -6,8 +6,11 @@ import akka.stream.scaladsl.{Sink, Source}
 
 import scala.concurrent.Future
 
-class AuctionRoomsActor(implicit mat: Materializer) extends Actor {
+class AuctionRoomsActor extends Actor {
   import AuctionRoomsActor._
+
+  implicit val materializer: Materializer = ActorMaterializer()
+  var rooms = Map.empty[Long, Room]
 
   class Room {
     var bids = Map.empty[String, Double]
@@ -26,8 +29,6 @@ class AuctionRoomsActor(implicit mat: Materializer) extends Actor {
     }
 
   }
-
-  var rooms = Map.empty[Long, Room]
 
   def lookupOrCreate(id: Long): Room = rooms.getOrElse(id, {
     val room = new Room
@@ -57,7 +58,6 @@ class AuctionRooms(actorSystem: ActorSystem) {
   import concurrent.duration.DurationInt
 
   implicit val timeout: akka.util.Timeout = 1.second
-  implicit val mat: Materializer = ActorMaterializer()(actorSystem)
 
   private lazy val ref = actorSystem.actorOf(Props(new AuctionRoomsActor))
 
