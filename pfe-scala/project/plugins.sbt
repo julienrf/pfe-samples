@@ -1,7 +1,9 @@
 // Comment to get more information during initialization
 logLevel := Level.Warn
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.0")
+resolvers += Resolver.sonatypeRepo("snapshots")
+
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.0-2016-03-22-8165ede-SNAPSHOT")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-coffeescript" % "1.0.0")
 

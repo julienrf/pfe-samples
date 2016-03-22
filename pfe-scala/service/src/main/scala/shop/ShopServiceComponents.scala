@@ -10,7 +10,6 @@ import play.api.routing.Router
 
 trait ShopServiceComponents extends BuiltInComponents with AhcWSComponents with DBComponents with BoneCPComponents with EvolutionsComponents {
 
-  val dynamicEvolutions = new DynamicEvolutions // WTF???
   applicationEvolutions // Force the application of evolutions, if needed
 
   val shop = new Shop(new Schema(dbApi.database("default").dataSource))

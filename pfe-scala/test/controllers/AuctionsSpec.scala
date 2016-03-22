@@ -19,10 +19,7 @@ class AuctionsSpec extends PlaySpecification with Mockito {
     app =
       new ApplicationLoader {
         def load(context: Context) =
-          new BuiltInComponentsFromContext(context) {
-            val router = Router.empty
-            override lazy val injector = new SimpleInjector(NewInstanceInjector) + router + cookieSigner + csrfTokenSigner + httpConfiguration + tempFileCreator + global + new Crypto(cookieSigner, csrfTokenSigner, new AESCTRCrypter(cryptoConfig))
-          }.application
+          new BuiltInComponentsFromContext(context) { val router = Router.empty }.application
       }.load(shop.fakeContext)
   ) {
     lazy val shop = mock[Shop]

@@ -46,10 +46,7 @@ trait ShopComponents extends ShopServiceComponents with EhCacheComponents with I
 
   // --- Customize Play components
 
-  val tokenSigner = csrfTokenSigner // WTF
   override lazy val httpFilters = Seq(csrfFilter)
-
-  override lazy val injector = new SimpleInjector(NewInstanceInjector) + router + cookieSigner + csrfTokenSigner + httpConfiguration + tempFileCreator + global + new Crypto(cookieSigner, csrfTokenSigner, new AESCTRCrypter(cryptoConfig))
 
 }
 
