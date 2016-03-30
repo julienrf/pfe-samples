@@ -4,8 +4,6 @@ name := "pfe-scala"
 
 version := "1.0-SNAPSHOT"
 
-resolvers in ThisBuild += Resolver.sonatypeRepo("snapshots")
-
 libraryDependencies ++= Seq(
   filters,
   cache,

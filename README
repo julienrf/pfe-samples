@@ -4,4 +4,4 @@ The `pfe-java` directory contains the Java version, the `pfe-scala` directory co
 
 Both are sbt projects, just install sbt (see http://www.scala-sbt.org for instructions) and use it to manage the project.
 
-**This branch contains an updated version of the Scala sample targeting Play 2.5.0**
+**This branch contains an updated version of the Scala sample targeting Play 2.5**
